@@ -14,8 +14,8 @@
  :builds {:client {:target :browser
                    :output-dir "target/"
                    :asset-path "./"
-                   :modules {:client {:entries [app.main]}}
-                   :devtools {:after-load app.main/reload!
+                   :modules {:client {:entries [fuzzy-filter.main]}}
+                   :devtools {:after-load fuzzy-filter.main/reload!
                               :http-root "target"
                               :http-port 7000
                               :loader-mode :eval}
@@ -25,5 +25,5 @@
                              :build-options {:manifest-name "assets.edn"}}}
           :page {:target :node-script
                  :output-to "target/page.js"
-                 :main app.page/main!
-                 :devtools {:after-load app.page/main!}}}}
+                 :main fuzzy-filter.page/main!
+                 :devtools {:after-load fuzzy-filter.page/main!}}}}

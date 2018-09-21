@@ -1,5 +1,5 @@
 
-(ns app.config (:require [app.util :refer [get-env!]]))
+(ns fuzzy-filter.config (:require [fuzzy-filter.util :refer [get-env!]]))
 
 (def bundle-builds #{"release" "local-bundle"})
 

@@ -1,14 +1,14 @@
 
-(ns app.main
+(ns fuzzy-filter.main
   (:require [respo.core :refer [render! clear-cache! realize-ssr!]]
-            [app.comp.container :refer [comp-container]]
-            [app.updater :refer [updater]]
-            [app.schema :as schema]
+            [fuzzy-filter.comp.container :refer [comp-container]]
+            [fuzzy-filter.updater :refer [updater]]
+            [fuzzy-filter.schema :as schema]
             [reel.util :refer [listen-devtools!]]
             [reel.core :refer [reel-updater refresh-reel]]
             [reel.schema :as reel-schema]
             [cljs.reader :refer [read-string]]
-            [app.config :as config]))
+            [fuzzy-filter.config :as config]))
 
 (defonce *reel
   (atom (-> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store))))
