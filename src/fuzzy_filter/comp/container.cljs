@@ -35,5 +35,7 @@
         :value (:query store),
         :placeholder "query",
         :on-input (fn [e d! m!] (d! :query (:value e)))})))
-    (pre {:style ui/font-code} (<> (resolve-text (:content store) (:query store))))
+    (pre
+     {:style {:font-family ui/font-code}}
+     (<> (resolve-text (:content store) (:query store))))
     (when dev? (cursor-> :reel comp-reel states reel {})))))
