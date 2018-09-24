@@ -10,7 +10,8 @@
             [reel.comp.reel :refer [comp-reel]]
             [respo-md.comp.md :refer [comp-md]]
             [fuzzy-filter.config :refer [dev?]]
-            [fuzzy-filter.core :refer [resolve-text]]))
+            [fuzzy-filter.core :refer [resolve-text]]
+            [fuzzy-filter.comp.visual :refer [comp-visual]]))
 
 (defcomp
  comp-container
@@ -35,7 +36,10 @@
         :value (:query store),
         :placeholder "query",
         :on-input (fn [e d! m!] (d! :query (:value e)))})))
-    (pre
-     {:style {:font-family ui/font-code}}
-     (<> (resolve-text (:content store) (:query store))))
+    (let [result (resolve-text (:content store) (:query store))]
+      (div
+       {}
+       (pre {:style {:font-family ui/font-code}} (<> result))
+       (when (:result result)
+         (comp-visual (:sequences result) {:style-rest {:color (hsl 0 0 70)}}))))
     (when dev? (cursor-> :reel comp-reel states reel {})))))
