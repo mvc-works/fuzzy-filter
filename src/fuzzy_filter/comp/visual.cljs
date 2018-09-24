@@ -19,6 +19,8 @@
           [idx
            (span
             {:inner-text (last chunk),
-             :style (if (= :hitted (first chunk))
-               (merge {:font-weight :bold} (:style-hitted options))
-               (:style-rest options))})])))))
+             :style (merge
+                     (:style-base options)
+                     (if (= :hitted (first chunk))
+                       (merge {:font-weight :bold} (:style-hitted options))
+                       (:style-rest options)))})])))))

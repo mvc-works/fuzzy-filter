@@ -1,6 +1,6 @@
 
 {:pom {:group-id "mvc-works",
-       :artifact-id "fuzzy-search",
+       :artifact-id "fuzzy-filter",
        :version "0.0.1",
        :name "A customzed fuzzy search function"}
  :packaging {:jar {:enabled true
