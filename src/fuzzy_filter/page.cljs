@@ -1,13 +1,13 @@
 
-(ns app.page
+(ns fuzzy-filter.page
   (:require [respo.render.html :refer [make-string]]
             [shell-page.core :refer [make-page spit slurp]]
-            [app.comp.container :refer [comp-container]]
-            [app.schema :as schema]
+            [fuzzy-filter.comp.container :refer [comp-container]]
+            [fuzzy-filter.schema :as schema]
             [reel.schema :as reel-schema]
             [cljs.reader :refer [read-string]]
-            [app.config :as config]
-            [app.util :refer [get-env!]]))
+            [fuzzy-filter.config :as config]
+            [fuzzy-filter.util :refer [get-env!]]))
 
 (def base-info
   {:title (:title config/site), :icon (:icon config/site), :ssr nil, :inline-html nil})

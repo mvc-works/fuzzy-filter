@@ -1,5 +1,5 @@
 
-(ns app.snippet )
+(ns fuzzy-filter.snippet )
 
 (defn main! []
   (require '[clojure.string :as string])
