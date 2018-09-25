@@ -40,6 +40,6 @@
       (div
        {}
        (pre {:style {:font-family ui/font-code}} (<> result))
-       (when (:result result)
-         (comp-visual (:sequences result) {:style-rest {:color (hsl 0 0 70)}}))))
+       (when (:matches? result)
+         (comp-visual (:chunks result) {:style-rest {:color (hsl 0 0 70)}}))))
     (when dev? (cursor-> :reel comp-reel states reel {})))))

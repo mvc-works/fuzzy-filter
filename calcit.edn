@@ -521,7 +521,7 @@
                  "j" {
                   :type :expr, :by "root", :at 1537804629535, :id "koYvZEh7H"
                   :data {
-                   "T" {:type :leaf, :by "root", :at 1537804630358, :text ":result", :id "wT35bevwhr"}
+                   "T" {:type :leaf, :by "rJG4IHzWf", :at 1537842988549, :text ":matches?", :id "wT35bevwhr"}
                    "j" {:type :leaf, :by "root", :at 1537804631215, :text "result", :id "lb_MqW_mtW"}
                   }
                  }
@@ -532,7 +532,7 @@
                    "j" {
                     :type :expr, :by "root", :at 1537804641482, :id "gfsKtvBNxd"
                     :data {
-                     "T" {:type :leaf, :by "root", :at 1537804644956, :text ":sequences", :id "SP6ueGz_W"}
+                     "T" {:type :leaf, :by "rJG4IHzWf", :at 1537843019240, :text ":chunks", :id "SP6ueGz_W"}
                      "j" {:type :leaf, :by "root", :at 1537804648494, :text "result", :id "2F-gkgLGG"}
                     }
                    }
@@ -1326,7 +1326,7 @@
              "j" {
               :type :expr, :by "root", :at 1537639491176, :id "vn83ZEcT-i"
               :data {
-               "T" {:type :leaf, :by "root", :at 1537639492314, :text ":result", :id "zOpnXALCR6"}
+               "T" {:type :leaf, :by "rJG4IHzWf", :at 1537842978707, :text ":matches?", :id "zOpnXALCR6"}
                "j" {
                 :type :expr, :by "root", :at 1537639596932, :id "AzVGtvl-cc"
                 :data {
@@ -1371,8 +1371,15 @@
              "r" {
               :type :expr, :by "root", :at 1537639493020, :id "x9lHcElTXj"
               :data {
-               "T" {:type :leaf, :by "root", :at 1537639501936, :text ":sequences", :id "x9lHcElTXjleaf"}
+               "T" {:type :leaf, :by "rJG4IHzWf", :at 1537843023518, :text ":chunks", :id "x9lHcElTXjleaf"}
                "j" {:type :leaf, :by "root", :at 1537639503941, :text "results", :id "ipZaTWMh1d"}
+              }
+             }
+             "v" {
+              :type :expr, :by "rJG4IHzWf", :at 1537842959220, :id "rc8VSC8Ub_"
+              :data {
+               "T" {:type :leaf, :by "rJG4IHzWf", :at 1537842969979, :text ":text", :id "rc8VSC8Ub_leaf"}
+               "j" {:type :leaf, :by "rJG4IHzWf", :at 1537842966833, :text "text", :id "ck0O7KeQw"}
               }
              }
             }
@@ -2774,7 +2781,7 @@
           :type :expr, :time 1499755354983, :id "B1aixsdK9pHb"
           :data {
            "T" {:type :leaf, :author "rJG4IHzWf", :time 1512359514709, :text ":content", :id "BJ0oxjdFq6rb"}
-           "j" {:type :leaf, :author "rJG4IHzWf", :time 1512359516026, :text "\"This is an example for fuzzy filtering.", :id "BJy2go_tcaBZ", :at 1537805238229, :by "root"}
+           "j" {:type :leaf, :author "rJG4IHzWf", :time 1512359516026, :text "\"this is an example for fuzzy filtering.", :id "BJy2go_tcaBZ", :at 1537843204912, :by "rJG4IHzWf"}
           }
          }
          "v" {

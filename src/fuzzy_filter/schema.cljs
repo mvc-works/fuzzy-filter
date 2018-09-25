@@ -3,5 +3,5 @@
 
 (def store
   {:states {},
-   :content "This is an example for fuzzy filtering.",
+   :content "this is an example for fuzzy filtering.",
    :query "this example fufilter"})

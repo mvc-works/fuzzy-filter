@@ -16,7 +16,9 @@
 (defn resolve-text
   ([text query]
    (let [results (conflate-chunks (resolve-text [] (seq text) (seq query)))]
-     {:result (not (some (fn [x] (= :missed (first x))) results)), :sequences results}))
+     {:matches? (not (some (fn [x] (= :missed (first x))) results)),
+      :chunks results,
+      :text text}))
   ([acc xs ys]
    (if (empty? xs)
      (if (empty? ys) acc (conj acc [:missed (apply str ys)]))
