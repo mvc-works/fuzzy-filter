@@ -1,7 +1,4 @@
 
 (ns fuzzy-filter.schema )
 
-(def store
-  {:states {},
-   :content "this is an example for fuzzy filtering.",
-   :query "this example fufilter"})
+(def store {:states {}, :content "this and that to search", :query "that search"})
