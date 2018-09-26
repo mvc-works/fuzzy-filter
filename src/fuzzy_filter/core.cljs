@@ -40,7 +40,6 @@
       :chunks result,
       :text text}))
   ([acc text ys]
-   (println "parsing" acc text ys)
    (if (empty? ys)
      (if (string/blank? text) acc (conj acc [:rest text]))
      (let [y0 (first ys), p (.indexOf text y0)]
