@@ -11,17 +11,20 @@ Demo http://repo.mvc-works.org/fuzzy-filter/
 [![Clojars Project](https://img.shields.io/clojars/v/mvc-works/fuzzy-filter.svg)](https://clojars.org/mvc-works/fuzzy-filter)
 
 ```edn
-[mvc-works/fuzzy-filter "0.0.2"]
+[mvc-works/fuzzy-filter "0.0.4"]
 ```
 
 ```edn
-[fuzzy-filter.core :refer [resolve-text]]
+[fuzzy-filter.core :refer [parse-by-letter parse-by-word]]
 [fuzzy-filter.comp.visual :refer [comp-visual]]
 ```
 
 ```clojure
-(resolve-text "content to query" "query")
-; => {:matches? true, :chunks [[:rest "content to "] [:hitted "query"]] :text "content to query"}
+(parse-by-letter "this and that to search" "that search")
+; => {:matches? false, :chunks [[:hitted "th"] [:rest "is "] [:hitted "a"] [:rest "nd "] [:hitted "t"] [:space "h"] [:rest "at to "] [:hitted "searc"] [:rest "h"] [:missed "g"]], :text "this and that to search"}
+
+(parse-by-word "this and that to search" "that search")
+; => {:matches? false, :chunks [[:rest "this and "] [:hitted "that"] [:missed "searcg"]], :text "this and that to search"}
 
 (comp-visual (:sequences result) {:style-rest {:color (hsl 0 0 70)}}))))
 ```

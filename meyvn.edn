@@ -1,7 +1,7 @@
 
 {:pom {:group-id "mvc-works",
        :artifact-id "fuzzy-filter",
-       :version "0.0.2",
+       :version "0.0.4",
        :name "A customzed fuzzy search function"}
  :packaging {:jar {:enabled true
                    :remote-repository {:id "clojars"
