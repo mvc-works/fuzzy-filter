@@ -11,7 +11,7 @@ Demo http://repo.mvc-works.org/fuzzy-filter/
 [![Clojars Project](https://img.shields.io/clojars/v/mvc-works/fuzzy-filter.svg)](https://clojars.org/mvc-works/fuzzy-filter)
 
 ```edn
-[mvc-works/fuzzy-filter "0.0.4"]
+[mvc-works/fuzzy-filter "0.0.5"]
 ```
 
 ```edn
