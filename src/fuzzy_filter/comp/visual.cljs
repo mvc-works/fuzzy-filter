@@ -21,6 +21,6 @@
             {:inner-text (last chunk),
              :style (merge
                      (:style-base options)
-                     (if (= :hitted (first chunk))
-                       (merge {:font-weight :bold} (:style-hitted options))
+                     (if (= :hit (first chunk))
+                       (merge {:font-weight :bold} (:style-hit options))
                        (:style-rest options)))})])))))

@@ -25,7 +25,7 @@
      (if (empty? xs)
        (conj acc [:missed (apply str ys)])
        (if (= (first xs) (first ys))
-         (recur (conj acc [:hitted (first xs)]) (rest xs) (rest ys))
+         (recur (conj acc [:hit (first xs)]) (rest xs) (rest ys))
          (if (= " " (first ys))
            (recur (conj acc [:space (first xs)]) (rest xs) (rest ys))
            (recur (conj acc [:rest (first xs)]) (rest xs) ys)))))))
@@ -46,8 +46,8 @@
        (cond
          (pos? p)
            (recur
-            (conj acc [:rest (subs text 0 p)] [:hitted y0])
+            (conj acc [:rest (subs text 0 p)] [:hit y0])
             (subs text (+ p (count y0)))
             (rest ys))
-         (zero? p) (recur (conj acc [:hitted y0]) (subs text (count y0)) (rest ys))
+         (zero? p) (recur (conj acc [:hit y0]) (subs text (count y0)) (rest ys))
          :else (conj acc [:missed y0]))))))
