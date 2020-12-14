@@ -1,0 +1,6 @@
+{:version "0.0.6"
+ :group-id "mvc-works"
+ :artifact-id "fuzzy-filter"
+ :skip-tag true
+ :description "A customzed fuzzy search function"
+ :scm-url "https://github.com/mvc-works/fuzzy-filter"}
