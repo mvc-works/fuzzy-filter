@@ -4,32 +4,31 @@ Fuzzy Filter
 
 > filter function for better intuitions.
 
-Demo http://repo.mvc-works.org/fuzzy-filter/
+Demo http://r.tiye.me/mvc-works/fuzzy-filter/
 
 ### Usage
 
-[![Clojars Project](https://img.shields.io/clojars/v/mvc-works/fuzzy-filter.svg)](https://clojars.org/mvc-works/fuzzy-filter)
-
-```edn
-[mvc-works/fuzzy-filter "0.0.6"]
+```cirru
+ns your-app
+  :require
+    fuzzy-filter.core :refer $ parse-by-letter parse-by-word
+    fuzzy-filter.comp.visual :refer $ comp-visual
 ```
 
-```edn
-[fuzzy-filter.core :refer [parse-by-letter parse-by-word]]
-[fuzzy-filter.comp.visual :refer [comp-visual]]
-```
+```cirru
+parse-by-letter "this and that to search" "that search"
 
-```clojure
-(parse-by-letter "this and that to search" "that search")
 ; => {:matches? false, :chunks [[:hit "th"] [:rest "is "] [:hit "a"] [:rest "nd "] [:hit "t"] [:space "h"] [:rest "at to "] [:hit "searc"] [:rest "h"] [:missed "g"]], :text "this and that to search"}
 
-(parse-by-word "this and that to search" "that searcH")
+parse-by-word "|this and that to search" "|that searcH"
 ; => {:matches? false, :chunks [[:rest "this and "] [:hit "that"] [:missed "searcH"]], :text "this and that to search"}
 
-(comp-visual (:sequences result) {:style-rest {:color (hsl 0 0 70)}}))))
+comp-visual (:sequences result) {}
+  :style-rest $ {}
+    :color (hsl 0 0 70)
 ```
 
-```clojure
+```cirru
 :style-base
 :style-hit
 :style-rest
@@ -37,7 +36,7 @@ Demo http://repo.mvc-works.org/fuzzy-filter/
 
 ### Workflow
 
-Workflow https://github.com/mvc-works/calcit-workflow
+Workflow https://github.com/calcit-lang/respo-calcit-workflow
 
 ### License
 

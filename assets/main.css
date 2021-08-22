@@ -29,3 +29,14 @@ body * {
 ::-webkit-resizer{
   background-color:transparent;
 }
+
+pre {
+  background-color: hsla(0, 10%, 97%, 1.0);
+  padding: 2px 8px;
+  border: 1px solid hsla(0, 10%, 86%, 1.0);
+}
+
+pre code {
+  font-size: 13px;
+  line-height: 18px;
+}
