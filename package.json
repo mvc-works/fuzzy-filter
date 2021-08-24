@@ -1,12 +1,12 @@
 {
-  "name": "calcit-workflow",
-  "version": "0.1.0",
-  "description": "ClojureScript workflow using Calcit Editor",
+  "name": "fuzzy-filter",
+  "version": "0.0.7",
+  "description": "Some tiny text filter function",
   "main": "index.js",
   "scripts": {  },
   "repository": {
     "type": "git",
-    "url": "git@github.com:mvc-works/calcit-workflow.git"
+    "url": "git@github.com:mvc-works/fuzzy-filter.git"
   },
   "author": "jiyinyiyong",
   "license": "MIT",

@@ -2,7 +2,7 @@
 {} (:package |fuzzy-filter)
   :configs $ {} (:init-fn |fuzzy-filter.main/main!) (:reload-fn |fuzzy-filter.main/reload!)
     :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/
-    :version |0.0.6
+    :version |0.0.7
   :files $ {}
     |fuzzy-filter.comp.visual $ {}
       :ns $ quote
