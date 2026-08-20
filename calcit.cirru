@@ -115,7 +115,7 @@
         |dev? $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def dev? $ = |dev
-              option:unwrap-or (get-env |mode) |release
+              option:unwrap-or (get-env! |mode) |release
           :examples $ []
           :schema $ :: 'Dynamic
         |site $ %{} 'CodeEntry (:doc |)
@@ -348,7 +348,12 @@
         |get-env! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn get-env! (property)
-              aget (.-env js/process) property
+              let
+                  process $ unsafe-coerce js/process JsObject
+                  env $ .-env process
+                if (js-present? env)
+                  aget (unsafe-coerce env JsObject) property
+                  , nil
           :examples $ []
           :schema $ :: 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
