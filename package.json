@@ -1,6 +1,6 @@
 {
   "name": "fuzzy-filter",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Some tiny text filter function",
   "main": "index.js",
   "scripts": {},
