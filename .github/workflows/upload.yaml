@@ -10,31 +10,29 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
 
-    - uses: actions/setup-node@v3
+    - uses: actions/setup-node@v6
       with:
-        node-version: 18
+        node-version: 24
         cache: 'yarn'
 
-    - uses: supplypike/setup-bin@v3
-      with:
-        uri: 'https://github.com/calcit-lang/calcit/releases/download/0.8.0/cr'
-        name: 'cr'
-        version: '0.8.0'
+    - uses: calcit-lang/setup-cr@0.0.9
 
-    - uses: supplypike/setup-bin@v3
-      with:
-        uri: 'https://github.com/calcit-lang/calcit/releases/download/0.8.0/caps'
-        name: 'caps'
-        version: '0.8.0'
+    - name: Validate Calcit snapshot
+      run: |
+        caps --ci
+        cr calcit.cirru edit format
+        git diff --exit-code -- calcit.cirru
+        cr calcit.cirru --check-only
 
     - name: "compiles to js"
       run: >
-        caps --ci && cr --emit-js --once
-        && yarn && yarn vite build --base=./
+        caps --ci && cr js
+        && yarn install --immutable && yarn vite build --base=./
 
     - name: Deploy to server
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       id: deploy
       uses: Pendect/action-rsyncer@v2.0.0
       env:
