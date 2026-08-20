@@ -1,9 +1,9 @@
 {
   "name": "fuzzy-filter",
   "version": "0.0.8",
+  "packageManager": "yarn@4.12.0",
   "description": "Some tiny text filter function",
   "main": "index.js",
-  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git@github.com:mvc-works/fuzzy-filter.git"
@@ -15,7 +15,7 @@
     "vite": "^4.4.9"
   },
   "dependencies": {
-    "@calcit/procs": "^0.8.0",
+    "@calcit/procs": "^0.13.27",
     "shortid": "^2.2.16"
   }
 }

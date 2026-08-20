@@ -1,7 +1,7 @@
 
 {} (:package |fuzzy-filter)
   :configs $ {} (:init-fn |fuzzy-filter.main/main!) (:reload-fn |fuzzy-filter.main/reload!) (:version |0.0.8)
-    :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/
+    :modules $ [] |respo.calcit/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/
   :entries $ {}
   :files $ {}
     |fuzzy-filter.comp.container $ %{} :FileEntry
