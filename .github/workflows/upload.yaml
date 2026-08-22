@@ -17,18 +17,18 @@ jobs:
           node-version: 24
           cache: 'yarn'
 
-      - uses: calcit-lang/setup-cr@0.0.9
+      - uses: calcit-lang/setup-calcit@v1
 
       - name: Validate Calcit snapshot
         run: |
           caps --ci
-          cr calcit.cirru edit format
+          calcit calcit.cirru edit format
           git diff --exit-code -- calcit.cirru
-          cr calcit.cirru --check-only
+          calcit calcit.cirru --check-only
 
       - name: "compiles to js"
         run: >
-          caps --ci && cr js
+          caps --ci && calcit calcit.cirru js
           && yarn install --immutable && yarn vite build --base=./
 
       - name: Deploy to server
