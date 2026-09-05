@@ -66,7 +66,6 @@
             [] respo.core :refer $ [] defcomp >> <> div button textarea span input pre code
             [] respo.comp.space :refer $ [] =<
             [] reel.comp.reel :refer $ [] comp-reel
-            [] respo-md.comp.md :refer $ [] comp-md
             [] fuzzy-filter.config :refer $ [] dev?
             [] fuzzy-filter.core :refer $ [] parse-by-letter parse-by-word
             [] fuzzy-filter.comp.visual :refer $ [] comp-visual
@@ -172,8 +171,8 @@
               if (empty? xs)
                 if (empty? ys) acc $ conj acc
                   [] :missed $ apply str ys
-                if (empty? xs)
-                  conj acc $ [] :missed (apply str ys)
+                if (empty? ys)
+                  conj acc $ [] :rest (apply str xs)
                   if
                     =
                       option:unwrap-or (first xs) nil
