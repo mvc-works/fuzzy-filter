@@ -1,14 +1,14 @@
 
-{} (:about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `cr query` to inspect and `cr edit`/`cr tree` to modify. Run `cr docs agents --full` first. Manual edits must follow format and schema conventions, then run `cr edit format`.") (:package |fuzzy-filter)
+{} (:about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `calcit query` to inspect and `calcit edit`/`calcit tree` to modify. Run `calcit docs agents --full` first. Manual edits must follow format and schema conventions, then run `calcit edit format`.") (:package |fuzzy-filter)
   :entries $ {}
     :default $ {} (:description |) (:init-fn 'fuzzy-filter.main/main!) (:mode :native) (:reload-fn 'fuzzy-filter.main/reload!)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/
       :type-slots $ {}
   :files $ {}
-    |fuzzy-filter.comp.container $ %{} 'FileEntry
+    'fuzzy-filter.comp.container $ %{} 'FileEntry
       :defs $ {}
-        |comp-container $ %{} 'CodeEntry (:doc |)
+        'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defcomp comp-container (reel)
               let
@@ -16,7 +16,7 @@
                   states $ &map:get store :states
                 div
                   {} $ :style
-                    merge ui/global ui/column $ {} (:padding 16)
+                    merge ui/global ui/column $ {} (:padding |16)
                   div ({})
                     div ({})
                       input $ {} (:style ui/input)
@@ -70,9 +70,9 @@
             [] fuzzy-filter.config :refer $ [] dev?
             [] fuzzy-filter.core :refer $ [] parse-by-letter parse-by-word
             [] fuzzy-filter.comp.visual :refer $ [] comp-visual
-    |fuzzy-filter.comp.visual $ %{} 'FileEntry
+    'fuzzy-filter.comp.visual $ %{} 'FileEntry
       :defs $ {}
-        |comp-visual $ %{} 'CodeEntry (:doc |)
+        'comp-visual $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defcomp comp-visual (pieces options)
               list->
@@ -85,7 +85,7 @@
                         :inner-text $ option:unwrap-or (last chunk) |
                         :style $ merge (&map:get options :style-base)
                           if
-                            = :hit $ option:unwrap-or (first chunk) nil
+                            = :hit $ option:unwrap-or (first chunk) :missed
                             merge
                               {} $ :font-weight :bold
                               (&map:get options :style-hit)
@@ -99,20 +99,20 @@
             [] respo-ui.core :as ui
             [] respo.core :refer $ [] defcomp cursor-> list-> <> div button textarea span input pre
             [] respo.comp.space :refer $ [] =<
-    |fuzzy-filter.config $ %{} 'FileEntry
+    'fuzzy-filter.config $ %{} 'FileEntry
       :defs $ {}
-        |bundle-builds $ %{} 'CodeEntry (:doc |)
+        'bundle-builds $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def bundle-builds $ #{} |release |local-bundle
           :examples $ []
           :schema $ :: 'Dynamic
-        |dev? $ %{} 'CodeEntry (:doc |)
+        'dev? $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def dev? $ = |dev
               option:unwrap-or (get-env |mode) |release
           :examples $ []
           :schema $ :: 'Dynamic
-        |site $ %{} 'CodeEntry (:doc |)
+        'site $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def site $ {} (:storage |fuzzy-filter) (:dev-ui |http://localhost:8100/main.css) (:release-ui |http://cdn.tiye.me/favored-fonts/main.css) (:cdn-url |http://cdn.tiye.me/fuzzy-filter/) (:cdn-folder |tiye.me:cdn/fuzzy-filter) (:title "|Fuzzy Filter") (:icon |http://cdn.tiye.me/logo/mvc-works.png) (:upload-folder |tiye.me:repo/mvc-works/fuzzy-filter/)
           :examples $ []
@@ -121,15 +121,15 @@
         :code $ quote
           ns fuzzy-filter.config $ :require
             [] fuzzy-filter.util :refer $ [] get-env!
-    |fuzzy-filter.core $ %{} 'FileEntry
+    'fuzzy-filter.core $ %{} 'FileEntry
       :defs $ {}
-        |conflate-chunks $ %{} 'CodeEntry (:doc |)
+        'conflate-chunks $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn conflate-chunks (xs)
               conflate-chunks-iter ([]) nil xs
           :examples $ []
           :schema $ :: 'Dynamic
-        |conflate-chunks-iter $ %{} 'CodeEntry (:doc |)
+        'conflate-chunks-iter $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn conflate-chunks-iter (acc buffer xs)
               if (empty? xs)
@@ -152,7 +152,7 @@
                       recur (conj acc buffer) x0 $ rest xs
           :examples $ []
           :schema $ :: 'Dynamic
-        |parse-by-letter $ %{} 'CodeEntry (:doc |)
+        'parse-by-letter $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn parse-by-letter (text query)
               let
@@ -161,12 +161,12 @@
                 {}
                   :matches? $ not
                     any? results $ fn (x)
-                      = :missed $ option:unwrap-or (first x) nil
+                      = :missed $ option:unwrap-or (first x) :missed
                   :chunks results
                   :text text
           :examples $ []
           :schema $ :: 'Dynamic
-        |parse-by-letter-iter $ %{} 'CodeEntry (:doc |)
+        'parse-by-letter-iter $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn parse-by-letter-iter (acc xs ys)
               if (empty? xs)
@@ -197,7 +197,7 @@
                         , ys
           :examples $ []
           :schema $ :: 'Dynamic
-        |parse-by-word $ %{} 'CodeEntry (:doc |)
+        'parse-by-word $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn parse-by-word (text query)
               let
@@ -208,12 +208,12 @@
                 {}
                   :matches? $ not
                     any? result $ fn (x)
-                      = :missed $ option:unwrap-or (first x) nil
+                      = :missed $ option:unwrap-or (first x) :missed
                   :chunks result
                   :text text
           :examples $ []
           :schema $ :: 'Dynamic
-        |parse-by-word-iter $ %{} 'CodeEntry (:doc |)
+        'parse-by-word-iter $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn parse-by-word-iter (acc text ys)
               if (empty? ys)
@@ -240,20 +240,20 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote
           ns fuzzy-filter.core $ :require ([] clojure.string :as string)
-    |fuzzy-filter.main $ %{} 'FileEntry
+    'fuzzy-filter.main $ %{} 'FileEntry
       :defs $ {}
-        |*reel $ %{} 'CodeEntry (:doc |)
+        '*reel $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defatom *reel $ -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
           :examples $ []
           :schema $ :: 'Dynamic
-        |dispatch! $ %{} 'CodeEntry (:doc |)
+        'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn dispatch! (op) (; println |Dispatch: op)
               reset! *reel $ reel-updater updater @*reel op
           :examples $ []
           :schema $ :: 'Dynamic
-        |main! $ %{} 'CodeEntry (:doc |)
+        'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn main! ()
               println "|Running mode:" $ if config/dev? |dev |release
@@ -271,19 +271,19 @@
               println "|App started."
           :examples $ []
           :schema $ :: 'Dynamic
-        |mount-target $ %{} 'CodeEntry (:doc |)
+        'mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def mount-target $ .querySelector js/document |.app
           :examples $ []
           :schema $ :: 'Dynamic
-        |persist-storage! $ %{} 'CodeEntry (:doc |)
+        'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn persist-storage! (? e)
               js/localStorage.setItem (&map:get config/site :storage)
                 format-cirru-edn $ &map:get @*reel :store
           :examples $ []
           :schema $ :: 'Dynamic
-        |reload! $ %{} 'CodeEntry (:doc |)
+        'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn reload! () $ if (nil? build-errors)
               do (remove-watch *reel :changes) (clear-cache!)
@@ -293,7 +293,7 @@
               hud! |error build-errors
           :examples $ []
           :schema $ :: 'Dynamic
-        |render-app! $ %{} 'CodeEntry (:doc |)
+        'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn render-app! () $ render! mount-target (comp-container @*reel) dispatch!
           :examples $ []
@@ -312,9 +312,9 @@
             [] fuzzy-filter.config :as config
             |./calcit.build-errors :default build-errors
             |bottom-tip :default hud!
-    |fuzzy-filter.schema $ %{} 'FileEntry
+    'fuzzy-filter.schema $ %{} 'FileEntry
       :defs $ {}
-        |store $ %{} 'CodeEntry (:doc |)
+        'store $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def store $ {}
               :states $ {}
@@ -324,9 +324,9 @@
           :schema $ :: 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote (ns fuzzy-filter.schema)
-    |fuzzy-filter.updater $ %{} 'FileEntry
+    'fuzzy-filter.updater $ %{} 'FileEntry
       :defs $ {}
-        |updater $ %{} 'CodeEntry (:doc |)
+        'updater $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn updater (store op op-id op-time)
               tag-match op
@@ -341,9 +341,9 @@
         :code $ quote
           ns fuzzy-filter.updater $ :require
             [] respo.cursor :refer $ [] update-states
-    |fuzzy-filter.util $ %{} 'FileEntry
+    'fuzzy-filter.util $ %{} 'FileEntry
       :defs $ {}
-        |get-env! $ %{} 'CodeEntry (:doc |)
+        'get-env! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn get-env! (property)
               aget (.-env js/process) property
