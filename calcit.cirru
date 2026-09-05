@@ -125,17 +125,17 @@
         'conflate-chunks $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn conflate-chunks (xs)
-              conflate-chunks-iter ([]) nil xs
+              conflate-chunks-iter ([]) ([]) xs
           :examples $ []
           :schema $ :: 'Dynamic
         'conflate-chunks-iter $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn conflate-chunks-iter (acc buffer xs)
               if (empty? xs)
-                if (option:none? buffer) acc $ conj acc (option:unwrap-or buffer nil)
+                if (empty? buffer) acc $ conj acc buffer
                 let
-                    x0 $ first xs
-                  if (option:none? buffer)
+                    x0 $ option:unwrap (first xs)
+                  if (empty? buffer)
                     recur acc x0 $ rest xs
                     if
                       =

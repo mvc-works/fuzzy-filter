@@ -38,6 +38,9 @@ jobs:
           caps --ci && calcit calcit.cirru js
           && yarn install --immutable && yarn vite build --base=./
 
+      - name: Test generated fuzzy matching behavior
+        run: node --test scripts/fuzzy-filter.test.mjs
+
       - name: Deploy to server
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         id: deploy
