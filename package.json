@@ -1,6 +1,7 @@
 {
   "name": "fuzzy-filter",
-  "version": "0.0.11",
+  "version": "0.0.8",
+  "packageManager": "yarn@4.12.0",
   "description": "Some tiny text filter function",
   "main": "index.js",
   "repository": {
@@ -11,10 +12,10 @@
   "license": "MIT",
   "devDependencies": {
     "bottom-tip": "^0.1.5",
-    "vite": "^8.0.16"
+    "vite": "^4.4.9"
   },
   "dependencies": {
-    "@calcit/procs": "^0.13.33",
+    "@calcit/procs": "0.13.77",
     "shortid": "^2.2.16"
   }
 }
