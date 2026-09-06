@@ -33,10 +33,17 @@ jobs:
           git diff --exit-code -- calcit.cirru
           calcit calcit.cirru --check-only
 
-      - name: "compiles to js"
-        run: >
-          caps --ci && calcit calcit.cirru js
-          && yarn install --immutable && yarn vite build --base=./
+      - name: Install dependencies and compile to JS
+        run: |
+          caps --ci
+          yarn install --immutable
+          calcit calcit.cirru js
+
+      - name: Test generated fuzzy matching behavior
+        run: node --test scripts/fuzzy-filter.test.mjs
+
+      - name: Build site
+        run: yarn vite build --base=./
 
       - name: Deploy to server
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
