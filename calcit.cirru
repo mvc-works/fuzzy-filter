@@ -135,8 +135,12 @@
                   recur acc x0 $ rest xs
                   if
                     =
-                      option:unwrap-or (first buffer) nil
-                      option:unwrap-or (first x0) nil
+                      assert-type
+                        option:unwrap-or (first buffer) :unknown
+                        , 'Tag
+                      assert-type
+                        option:unwrap-or (first x0) :unknown
+                        , 'Tag
                     recur acc
                       []
                         option:unwrap-or (first buffer) nil
@@ -155,7 +159,9 @@
         'parse-by-letter $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn parse-by-letter (text query)
             let
-                results $ conflate-chunks $ parse-by-letter-iter ([]) (split text |) (split query |)
+                results $ conflate-chunks $ parse-by-letter-iter ([])
+                  split (assert-type text 'String) |
+                  split (assert-type query 'String) |
               {}
                 :matches? $ not $ any? results
                   fn (x)
