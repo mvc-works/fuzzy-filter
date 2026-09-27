@@ -5,7 +5,7 @@
   :entries $ {} $ :default
     {} (:description |) (:init-fn 'fuzzy-filter.main/main!) (:mode :native) (:reload-fn 'fuzzy-filter.main/reload!)
       :feature-policy $ {}
-      :modules $ [] |respo.calcit/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/
+      :modules $ [] |respo.calcit/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |js-ffi/
       :type-slots $ {}
   :files $ {}
     'fuzzy-filter.comp.container $ %{} 'FileEntry
@@ -115,7 +115,6 @@
           :schema $ :: 'Map 'Tag 'String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.config
-          :require $ [] fuzzy-filter.util :refer $ [] get-env!
     'fuzzy-filter.core $ %{} 'FileEntry
       :defs $ {}
         'conflate-chunks $ %{} 'CodeEntry (:doc |)
@@ -172,6 +171,15 @@
           :schema $ :: 'Fn $ {}
             :args $ [] 'String 'String
             :return $ :: 'Map 'Tag 'Dynamic
+          :tests $ []
+            %{} 'TestEntry (:name |matched-subsequence)
+              :code $ quote $ assert= true
+                &map:get (parse-by-letter |abc |ac) :matches?
+              :tags $ #{} :unit
+            %{} 'TestEntry (:name |unmatched-query-suffix)
+              :code $ quote $ assert= false
+                &map:get (parse-by-letter |abc |abcd) :matches?
+              :tags $ #{} :unit
         'parse-by-letter-iter $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn parse-by-letter-iter (acc xs ys)
             if (empty? xs)
@@ -271,26 +279,31 @@
             render-app!
             add-watch *reel :changes $ fn (r p) (render-app!)
             listen-devtools! |a dispatch!
-            js/window.addEventListener |beforeunload $ fn (event) (persist-storage!)
-            js/setInterval persist-storage! $ * 1000 60
-            let
-                raw $ js/localStorage.getItem $ &map:get config/site :storage
-              when (js-present? raw)
-                dispatch! $ :: :hydrate-storage $ parse-cirru-edn (unsafe-coerce raw 'String)
+            js-ffi.browser/add-event-listener! |beforeunload $ fn (event) (persist-storage!)
+            js-ffi.browser/set-interval! persist-storage! $ * 1000 60
+            match
+              js-ffi.browser/storage-get $ &map:get config/site :storage
+              (:none) &unit
+              (:some raw)
+                dispatch! $ :: :hydrate-storage $ parse-cirru-edn raw
             println "|App started."
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
             :features $ #{} :js-ffi
         'mount-target $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def mount-target (.querySelector js/document |.app)
+          :code $ quote $ defn mount-target ()
+            match (js-ffi.browser/query-selector |.app)
+              (:none) (raise "|Missing .app mount target")
+              (:some host) (respo.ffi.browser/narrow-element host)
           :examples $ []
-          :schema $ :: 'JsObject
+          :schema $ :: 'Fn $ {} (:return 'respo.dom/DomElement)
+            :args $ []
+            :features $ #{} :js-ffi
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
-            js/localStorage.setItem (&map:get config/site :storage)
+            js-ffi.browser/storage-set! (&map:get config/site :storage)
               format-cirru-edn $ &map:get @*reel :store
-            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
@@ -309,7 +322,7 @@
             :features $ #{} :js-ffi
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
-            render! mount-target (comp-container @*reel) dispatch!
+            render! (mount-target) (comp-container @*reel) dispatch!
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
@@ -357,14 +370,3 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.updater
           :require $ [] respo.cursor :refer $ [] update-states
-    'fuzzy-filter.util $ %{} 'FileEntry
-      :defs $ {} $ 'get-env!
-        %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn get-env! (property)
-            aget (unsafe-coerce js/process.env 'JsObject) property
-          :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'String
-            :features $ #{} :js-ffi
-      :ns $ %{} 'NsEntry (:doc |)
-        :code $ quote $ ns fuzzy-filter.util
