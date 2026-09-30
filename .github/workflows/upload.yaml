@@ -36,8 +36,8 @@ jobs:
         tools: calcit,caps
         caps-version: "0.1.1"
 
-    # Current Reel/Markdown/UI manifests still request preceding compatible
-    # alpha releases, so strict Caps resolution rejects the highest SemVer set.
+    # The direct js-ffi dependency is newer than the version requested by
+    # Respo; strict resolution is not claimed until upstream manifests align.
     - name: Install and validate
       run: |
         set -euo pipefail
@@ -53,6 +53,10 @@ jobs:
         git diff --exit-code -- calcit.cirru
         calcit calcit.cirru fix --workflow strict --verify --format edn
         calcit calcit.cirru --check-only
+        calcit calcit.cirru analyze check-public \
+          --ns fuzzy-filter.comp.container --ns fuzzy-filter.comp.visual \
+          --ns fuzzy-filter.config --ns fuzzy-filter.core --ns fuzzy-filter.main \
+          --ns fuzzy-filter.schema --ns fuzzy-filter.updater --summary-only
         calcit calcit.cirru test --require-match --summary-only --format json
         calcit calcit.cirru analyze check-types --summary-only --format json
         calcit calcit.cirru analyze dynamic-methods --summary-only --format json
@@ -74,9 +78,8 @@ jobs:
         echo "VITE_BASE_URL=${VITE_BASE_URL}" >> "$GITHUB_ENV"
         echo "prefix=${asset_prefix}" >> "$GITHUB_OUTPUT"
         echo "base-url=${VITE_BASE_URL}" >> "$GITHUB_OUTPUT"
-        calcit calcit.cirru js
-        node --test scripts/fuzzy-filter.test.mjs
-        yarn vite build --base="$VITE_BASE_URL"
+        yarn build
+        node --test scripts/fuzzy-filter.test.mjs scripts/cdn.test.mjs
 
     - name: Upload static assets to COS
       if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
