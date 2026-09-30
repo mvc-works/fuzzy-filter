@@ -10,8 +10,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: upload-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  group: cos-upload-${{ github.repository }}-${{ github.event_name == 'pull_request' && 'pr' || 'production' }}
+  cancel-in-progress: false
 
 jobs:
   test:
@@ -40,6 +40,12 @@ jobs:
     # alpha releases, so strict Caps resolution rejects the highest SemVer set.
     - name: Install and validate
       run: |
+        set -euo pipefail
+        test "$(calcit --version)" = "0.27.0"
+        test -f calcit.cirru
+        test -f deps.cirru
+        test ! -e compact.cirru
+        test ! -e package.cirru
         caps --ci
         yarn install --immutable
         caps verify --toolchain
@@ -58,6 +64,7 @@ jobs:
       env:
         CDN_ORIGIN: https://cos-sh.tiye.me
       run: |
+        set -euo pipefail
         if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
           asset_prefix="${GITHUB_REPOSITORY}/pr/"
         else

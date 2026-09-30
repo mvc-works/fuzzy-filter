@@ -29,7 +29,7 @@ Workflow https://github.com/calcit-lang/respo-calcit-workflow
 
 ### 开发验证
 
-项目使用 Calcit 0.24.3 与 `calcit-lang/js-ffi` 的类型化浏览器适配器处理挂载节点、本地存储和定时器。运行以下命令验证 Calcit 测试及生成的 JavaScript：
+项目使用 Calcit 0.27.0 与 `calcit-lang/js-ffi` 的类型化浏览器适配器处理挂载节点、本地存储和定时器。仅使用 `calcit.cirru`、`deps.cirru`，不要恢复或提交旧的 `compact.cirru`、`package.cirru`；CI 也会拒绝被 Git 忽略但仍存在的旧文件。运行以下命令验证 Calcit 测试及生成的 JavaScript：
 
 ```bash
 caps --strict --ci
