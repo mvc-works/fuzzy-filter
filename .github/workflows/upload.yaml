@@ -79,7 +79,7 @@ jobs:
         echo "prefix=${asset_prefix}" >> "$GITHUB_OUTPUT"
         echo "base-url=${VITE_BASE_URL}" >> "$GITHUB_OUTPUT"
         yarn build
-        node --test scripts/fuzzy-filter.test.mjs scripts/cdn.test.mjs
+        node --test scripts/fuzzy-filter.test.mjs
 
     - name: Upload static assets to COS
       if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository

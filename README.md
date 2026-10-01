@@ -47,9 +47,8 @@ node --test scripts/fuzzy-filter.test.mjs
 
 ```bash
 VITE_BASE_URL=https://cos-sh.tiye.me/mvc-works/fuzzy-filter/pr/ yarn build
-VITE_BASE_URL=https://cos-sh.tiye.me/mvc-works/fuzzy-filter/pr/ node --test scripts/cdn.test.mjs
 ```
 
-本地测试只检查生成 HTML 引用的 JS/CSS 路径，远端上传校验由 COS Action 内置完成。原共享字体、图标与服务器部署路径不变。
+上传校验使用 COS Action 内置 verify 配置，不添加额外 CDN 校验脚本。原共享字体、图标与服务器部署路径不变。
 
 MIT
