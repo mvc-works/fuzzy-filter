@@ -41,14 +41,16 @@ node --test scripts/fuzzy-filter.test.mjs
 
 当前直接 js-ffi 版本比 Respo 的传递请求更新，Caps 会报告版本冲突；尚不宣称 `caps --strict --ci` 通过。浏览器入口显式声明 `mode: js` / `target: browser`，公共定义检查覆盖全部 7 个业务命名空间。输入回调接收两个参数，读取 `RespoEvent` 字段并派发单参数 Enum。
 
-### License
+### Frontend deployment
 
 前端生产构建通过 `VITE_BASE_URL` 配置 COS 路径；本地未设置时仍使用相对路径：
 
 ```bash
-VITE_BASE_URL=https://cos-sh.tiye.me/mvc-works/fuzzy-filter/pr/ yarn build
+VITE_BASE_URL=https://cos-sh.tiye.me/mvc-works/fuzzy-filter/pr/30/ yarn build
 ```
 
 上传校验使用 COS Action 内置 verify 配置，不添加额外 CDN 校验脚本。原共享字体、图标与服务器部署路径不变。
+
+### License
 
 MIT

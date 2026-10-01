@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: cos-upload-${{ github.repository }}-${{ github.event_name == 'pull_request' && 'pr' || 'production' }}
+  group: cos-upload-${{ github.repository }}-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'production' }}
   cancel-in-progress: false
 
 jobs:
@@ -67,10 +67,11 @@ jobs:
       id: asset-path
       env:
         CDN_ORIGIN: https://cos-sh.tiye.me
+        PR_NUMBER: ${{ github.event.pull_request.number }}
       run: |
         set -euo pipefail
         if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
-          asset_prefix="${GITHUB_REPOSITORY}/pr/"
+          asset_prefix="${GITHUB_REPOSITORY}/pr/${PR_NUMBER}/"
         else
           asset_prefix="${GITHUB_REPOSITORY}/"
         fi
@@ -79,7 +80,7 @@ jobs:
         echo "prefix=${asset_prefix}" >> "$GITHUB_OUTPUT"
         echo "base-url=${VITE_BASE_URL}" >> "$GITHUB_OUTPUT"
         yarn build
-        node --test scripts/fuzzy-filter.test.mjs
+        node --test scripts/*.test.mjs
 
     - name: Upload static assets to COS
       if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository

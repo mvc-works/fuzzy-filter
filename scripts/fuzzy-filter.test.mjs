@@ -48,6 +48,7 @@ for (const [index, key, value] of [[0, tags.content, 'abc'], [1, tags.query, 'ac
     const rendered = inputs(render(store));
     assert.equal(rendered.length, 2);
     const handler = read(element_event(rendered[index]), tags.input);
+    assert.equal(handler.length, 2);
     let updated = store;
     handler(event, (...args) => {
       assert.equal(args.length, 1);
