@@ -4,6 +4,11 @@
   "packageManager": "yarn@4.18.0",
   "description": "Some tiny text filter function",
   "main": "index.js",
+  "scripts": {
+    "compile": "calcit calcit.cirru js",
+    "build": "yarn compile && yarn vite build",
+    "dev": "yarn vite"
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:mvc-works/fuzzy-filter.git"

@@ -3,9 +3,9 @@
   :about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `calcit query` to inspect and `calcit edit`/`calcit tree` to modify. Run `calcit docs agents --contract` before mutations; use `--full` for first orientation or changed contract digest. Manual edits must follow format and schema conventions, then run `calcit edit format`."
   :package |fuzzy-filter
   :entries $ {} $ :default
-    {} (:description |) (:init-fn 'fuzzy-filter.main/main!) (:mode :native) (:reload-fn 'fuzzy-filter.main/reload!)
+    {} (:description |) (:init-fn 'fuzzy-filter.main/main!) (:mode :js) (:reload-fn 'fuzzy-filter.main/reload!) (:target :browser)
       :feature-policy $ {}
-      :modules $ [] |respo.calcit/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |js-ffi/
+      :modules $ [] |respo.calcit/ |respo-ui.calcit/ |reel.calcit/ |js-ffi/
       :type-slots $ {}
   :files $ {}
     'fuzzy-filter.comp.container $ %{} 'FileEntry
@@ -23,15 +23,21 @@
                     input $ {} (:style ui/input)
                       :value $ &map:get store :content
                       :placeholder |text
-                      :on-input $ fn (e d! m!)
-                        d! :content $ &map:get e :value
+                      :on-input $ fn (e d!)
+                        hint-fn $ {}
+                          :args $ [] (quote respo.schema/RespoEvent) (quote Dynamic)
+                          :return $ quote Dynamic
+                        d! $ :: :content $ :value e
                   =< nil 8
                   div ({})
                     input $ {} (:style ui/input)
                       :value $ &map:get store :query
                       :placeholder |query
-                      :on-input $ fn (e d! m!)
-                        d! :query $ &map:get e :value
+                      :on-input $ fn (e d!)
+                        hint-fn $ {}
+                          :args $ [] (quote respo.schema/RespoEvent) (quote Dynamic)
+                          :return $ quote Dynamic
+                        d! $ :: :query $ :value e
                 let
                     result $ parse-by-letter (&map:get store :content) (&map:get store :query)
                     word-result $ parse-by-word (&map:get store :content) (&map:get store :query)

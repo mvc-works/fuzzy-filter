@@ -10,8 +10,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: upload-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  group: cos-upload-${{ github.repository }}-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'production' }}
+  cancel-in-progress: false
 
 jobs:
   test:
@@ -36,10 +36,16 @@ jobs:
         tools: calcit,caps
         caps-version: "0.1.1"
 
-    # Current Reel/Markdown/UI manifests still request preceding compatible
-    # alpha releases, so strict Caps resolution rejects the highest SemVer set.
+    # The direct js-ffi dependency is newer than the version requested by
+    # Respo; strict resolution is not claimed until upstream manifests align.
     - name: Install and validate
       run: |
+        set -euo pipefail
+        test "$(calcit --version)" = "0.27.0"
+        test -f calcit.cirru
+        test -f deps.cirru
+        test ! -e compact.cirru
+        test ! -e package.cirru
         caps --ci
         yarn install --immutable
         caps verify --toolchain
@@ -47,6 +53,10 @@ jobs:
         git diff --exit-code -- calcit.cirru
         calcit calcit.cirru fix --workflow strict --verify --format edn
         calcit calcit.cirru --check-only
+        calcit calcit.cirru analyze check-public \
+          --ns fuzzy-filter.comp.container --ns fuzzy-filter.comp.visual \
+          --ns fuzzy-filter.config --ns fuzzy-filter.core --ns fuzzy-filter.main \
+          --ns fuzzy-filter.schema --ns fuzzy-filter.updater --summary-only
         calcit calcit.cirru test --require-match --summary-only --format json
         calcit calcit.cirru analyze check-types --summary-only --format json
         calcit calcit.cirru analyze dynamic-methods --summary-only --format json
@@ -57,9 +67,11 @@ jobs:
       id: asset-path
       env:
         CDN_ORIGIN: https://cos-sh.tiye.me
+        PR_NUMBER: ${{ github.event.pull_request.number }}
       run: |
+        set -euo pipefail
         if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
-          asset_prefix="${GITHUB_REPOSITORY}/pr/"
+          asset_prefix="${GITHUB_REPOSITORY}/pr/${PR_NUMBER}/"
         else
           asset_prefix="${GITHUB_REPOSITORY}/"
         fi
@@ -67,9 +79,8 @@ jobs:
         echo "VITE_BASE_URL=${VITE_BASE_URL}" >> "$GITHUB_ENV"
         echo "prefix=${asset_prefix}" >> "$GITHUB_OUTPUT"
         echo "base-url=${VITE_BASE_URL}" >> "$GITHUB_OUTPUT"
-        calcit calcit.cirru js
-        node --test scripts/fuzzy-filter.test.mjs
-        yarn vite build --base="$VITE_BASE_URL"
+        yarn build
+        node --test scripts/*.test.mjs
 
     - name: Upload static assets to COS
       if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
