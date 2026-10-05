@@ -46,10 +46,20 @@ node --test scripts/fuzzy-filter.test.mjs
 前端生产构建通过 `VITE_BASE_URL` 配置 COS 路径；本地未设置时仍使用相对路径：
 
 ```bash
-VITE_BASE_URL=https://cos-sh.tiye.me/mvc-works/fuzzy-filter/pr/30/ yarn build
+VITE_BASE_URL=https://cos-sh.tiye.me/mvc-works/fuzzy-filter/ yarn build
 ```
 
-上传校验使用 COS Action 内置 verify 配置，不添加额外 CDN 校验脚本。原共享字体、图标与服务器部署路径不变。
+上传校验使用正式 COS Action v1.2.0 的内置 verify 配置，通过
+`public-base-url` 启用，不添加额外 CDN 校验脚本。Action 固定到该正式版本
+的已审查提交。原共享字体、图标与服务器部署路径不变。
+
+PR 预览路径为 `mvc-works/fuzzy-filter/pr/<number>/<run-id>/<attempt>/`，
+每次运行和重试隔离，生产前缀不变。每个 PR 及生产使用独立队列，保留等待
+任务，不取消正在上传的任务。
+
+本轮仅更新 COS/CDN，不改变当前 Calcit 0.27.0、既有模块、源码、锁文件或
+原类型门禁与业务测试。独立 0.28.0 候选仍被共享 JS-FFI 的
+`KeyboardEventHost` 类型断言阻塞；COS 配置成功不代表完整 Calcit 升级完成。
 
 ### License
 
