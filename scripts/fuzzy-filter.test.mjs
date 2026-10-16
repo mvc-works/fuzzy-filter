@@ -7,7 +7,7 @@ import { updater } from "../js-out/fuzzy-filter.updater.mjs";
 import { RespoEvent } from "../js-out/respo.schema.mjs";
 import {
   component_$q_, component_tree, element_$q_, element_children,
-  element_name, element_event, element_attrs,
+  element_name, element_event, element_attrs, render_node_value,
 } from "../js-out/respo.util.detect.mjs";
 
 import { format_cirru_edn, option_$o_unwrap_or } from "../js-out/calcit.core.mjs";
@@ -33,7 +33,8 @@ const inputs = (component) => {
     const children = element_children(node);
     for (let index = 0; index < c.count(children); index++) {
       const entry = c.option_$o_unwrap(c.nth(children, index));
-      walk(c.option_$o_unwrap(c.nth(entry, 1)));
+      const child = entry.get('node');
+      if (child.tag.value === 'some') walk(render_node_value(child.get(1)));
     }
   };
   walk(component);
@@ -95,8 +96,12 @@ test("typed browser lookup and storage preserve missing values", () => {
   const element = {};
   const values = new Map();
   const storage = {
+    get length() { return values.size; },
     getItem: (key) => values.get(key) ?? null,
     setItem: (key, value) => values.set(key, value),
+    key: (index) => [...values.keys()][index] ?? null,
+    removeItem: (key) => values.delete(key),
+    clear: () => values.clear(),
   };
   try {
     globalThis.document = { querySelector: (selector) => selector === ".app" ? element : null };

@@ -35,19 +35,17 @@ jobs:
     - uses: calcit-lang/setup-calcit@ca701be5a471759e442aa053cd100720bbe1f09f # v1.5.0
       with:
         tools: calcit,caps
+        deps-file: deps.cirru
         caps-version: "0.1.1"
 
-    # The direct js-ffi dependency is newer than the version requested by
-    # Respo; strict resolution is not claimed until upstream manifests align.
     - name: Install and validate
       run: |
         set -euo pipefail
-        test "$(calcit --version)" = "0.27.0"
         test -f calcit.cirru
         test -f deps.cirru
         test ! -e compact.cirru
         test ! -e package.cirru
-        caps --ci
+        caps --strict --ci
         yarn install --immutable
         caps verify --toolchain
         calcit calcit.cirru edit format
@@ -81,7 +79,7 @@ jobs:
         echo "prefix=${asset_prefix}" >> "$GITHUB_OUTPUT"
         echo "base-url=${VITE_BASE_URL}" >> "$GITHUB_OUTPUT"
         yarn build
-        node --test scripts/*.test.mjs
+        node --test scripts/fuzzy-filter.test.mjs
 
     - name: Upload static assets to COS
       if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
