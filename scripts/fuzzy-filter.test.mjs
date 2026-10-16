@@ -4,10 +4,10 @@ import * as c from "../js-out/calcit.core.mjs";
 import { comp_container } from "../js-out/fuzzy-filter.comp.container.mjs";
 import { store } from "../js-out/fuzzy-filter.schema.mjs";
 import { updater } from "../js-out/fuzzy-filter.updater.mjs";
-import { RespoEvent } from "../js-out/respo.schema.mjs";
+import { event__GT_edn } from "../js-out/respo.util.format.mjs";
 import {
   component_$q_, component_tree, element_$q_, element_children,
-  element_name, element_event, element_attrs,
+  element_name, element_event, element_attrs, render_node_value,
 } from "../js-out/respo.util.detect.mjs";
 
 import { format_cirru_edn, option_$o_unwrap_or } from "../js-out/calcit.core.mjs";
@@ -33,7 +33,8 @@ const inputs = (component) => {
     const children = element_children(node);
     for (let index = 0; index < c.count(children); index++) {
       const entry = c.option_$o_unwrap(c.nth(children, index));
-      walk(c.option_$o_unwrap(c.nth(entry, 1)));
+      const child = entry.get('node');
+      if (child.tag.value === 'some') walk(render_node_value(child.get(1)));
     }
   };
   walk(component);
@@ -42,9 +43,7 @@ const inputs = (component) => {
 
 for (const [index, key, value] of [[0, tags.content, 'abc'], [1, tags.query, 'ac']]) {
   test(`actual ${key.value} input accepts two arguments and dispatches a single Enum`, () => {
-    const fields = RespoEvent.fields.flatMap(field => [field,
-      field === tags.value ? value : field === tags.type ? tags.input : null]);
-    const event = c._$n__PCT__$M_(RespoEvent, ...fields);
+    const event = event__GT_edn({ type: "input", target: { value, checked: false } });
     const rendered = inputs(render(store));
     assert.equal(rendered.length, 2);
     const handler = read(element_event(rendered[index]), tags.input);
@@ -95,8 +94,12 @@ test("typed browser lookup and storage preserve missing values", () => {
   const element = {};
   const values = new Map();
   const storage = {
+    get length() { return values.size; },
     getItem: (key) => values.get(key) ?? null,
     setItem: (key, value) => values.set(key, value),
+    key: (index) => [...values.keys()][index] ?? null,
+    removeItem: (key) => values.delete(key),
+    clear: () => values.clear(),
   };
   try {
     globalThis.document = { querySelector: (selector) => selector === ".app" ? element : null };

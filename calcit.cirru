@@ -13,34 +13,52 @@
         %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (reel)
             let
-                store $ &map:get reel :store
-                states $ &map:get store :states
+                store $ decode-map-as
+                  match (calcit.core/get reel :store)
+                    (:some value) value
+                    (:none) nil
+                  :: 'Map 'Dynamic 'Dynamic
+                states $ match (calcit.core/get store :states)
+                  (:some value) value
+                  (:none) nil
+                content $ decode-map-as
+                  match (calcit.core/get store :content)
+                    (:some value) value
+                    (:none) nil
+                  , 'String
+                query $ decode-map-as
+                  match (calcit.core/get store :query)
+                    (:some value) value
+                    (:none) nil
+                  , 'String
               div
                 {} $ :style $ merge ui/global ui/column
                   {} $ :padding |16
                 div ({})
                   div ({})
-                    input $ {} (:style ui/input)
-                      :value $ &map:get store :content
-                      :placeholder |text
+                    input $ {} (:style ui/input) (:value content) (:placeholder |text)
                       :on-input $ fn (e d!)
                         hint-fn $ {}
-                          :args $ [] (quote respo.schema/RespoEvent) (quote Dynamic)
-                          :return $ quote Dynamic
-                        d! $ :: :content $ :value e
+                          :args $ [] (:: 'Map 'Tag 'Dynamic) 'Dynamic
+                          :return 'Unit
+                        d! $ :: :content $ decode-map-as
+                          .unwrap $ get e :value
+                          , 'String
+                        , &unit
                   =< nil 8
                   div ({})
-                    input $ {} (:style ui/input)
-                      :value $ &map:get store :query
-                      :placeholder |query
+                    input $ {} (:style ui/input) (:value query) (:placeholder |query)
                       :on-input $ fn (e d!)
                         hint-fn $ {}
-                          :args $ [] (quote respo.schema/RespoEvent) (quote Dynamic)
-                          :return $ quote Dynamic
-                        d! $ :: :query $ :value e
+                          :args $ [] (:: 'Map 'Tag 'Dynamic) 'Dynamic
+                          :return 'Unit
+                        d! $ :: :query $ decode-map-as
+                          .unwrap $ get e :value
+                          , 'String
+                        , &unit
                 let
-                    result $ parse-by-letter (&map:get store :content) (&map:get store :query)
-                    word-result $ parse-by-word (&map:get store :content) (&map:get store :query)
+                    result $ parse-by-letter content query
+                    word-result $ parse-by-word content query
                   div ({})
                     pre
                       {} $ :style $ {} (:font-family ui/font-code)
@@ -50,13 +68,29 @@
                       {} $ :style $ {} (:font-family ui/font-code)
                       code ({})
                         <> $ trim $ format-cirru-edn word-result
-                    when (&map:get result :matches?)
+                    when
+                      match (calcit.core/get result :matches?)
+                        (:some value) value
+                        (:none) nil
                       div ({})
-                        comp-visual (&map:get result :chunks)
+                        comp-visual
+                          decode-map-as
+                            match (calcit.core/get result :chunks)
+                              (:some value) value
+                              (:none) nil
+                            :: 'List $ :: 'List 'Dynamic
                           {} $ :color $ hsl 0 0 70
-                    when (&map:get word-result :matches?)
+                    when
+                      match (calcit.core/get word-result :matches?)
+                        (:some value) value
+                        (:none) nil
                       div ({})
-                        comp-visual (&map:get word-result :chunks)
+                        comp-visual
+                          decode-map-as
+                            match (calcit.core/get word-result :chunks)
+                              (:some value) value
+                              (:none) nil
+                            :: 'List $ :: 'List 'Dynamic
                           {} $ :color $ hsl 0 0 70
                 when dev? $ comp-reel (>> states :reel) reel $ {}
           :examples $ []
@@ -65,14 +99,14 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.comp.container
           :require
-            [] respo-ui.core :refer $ [] hsl
-            [] respo-ui.core :as ui
-            [] respo.core :refer $ [] defcomp >> <> div button textarea span input pre code
-            [] respo.comp.space :refer $ [] =<
-            [] reel.comp.reel :refer $ [] comp-reel
-            [] fuzzy-filter.config :refer $ [] dev?
-            [] fuzzy-filter.core :refer $ [] parse-by-letter parse-by-word
-            [] fuzzy-filter.comp.visual :refer $ [] comp-visual
+            respo-ui.core :refer $ hsl
+            respo-ui.core :as ui
+            respo.core :refer $ defcomp >> <> div button textarea span input pre code
+            respo.comp.space :refer $ =<
+            reel.comp.reel :refer $ comp-reel
+            fuzzy-filter.config :refer $ dev?
+            fuzzy-filter.core :refer $ parse-by-letter parse-by-word
+            fuzzy-filter.comp.visual :refer $ comp-visual
     'fuzzy-filter.comp.visual $ %{} 'FileEntry
       :defs $ {} $ 'comp-visual
         %{} 'CodeEntry (:doc |)
@@ -99,10 +133,10 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.comp.visual
           :require
-            [] hsl.core :refer $ [] hsl
-            [] respo-ui.core :as ui
-            [] respo.core :refer $ [] defcomp cursor-> list-> <> div button textarea span input pre
-            [] respo.comp.space :refer $ [] =<
+            hsl.core :refer $ hsl
+            respo-ui.core :as ui
+            respo.core :refer $ defcomp cursor-> list-> <> div button textarea span input pre
+            respo.comp.space :refer $ =<
     'fuzzy-filter.config $ %{} 'FileEntry
       :defs $ {}
         'bundle-builds $ %{} 'CodeEntry (:doc |)
@@ -140,10 +174,10 @@
                   recur acc x0 $ rest xs
                   if
                     =
-                      assert-type
+                      decode-map-as
                         option:unwrap-or (first buffer) :unknown
                         , 'Tag
-                      assert-type
+                      decode-map-as
                         option:unwrap-or (first x0) :unknown
                         , 'Tag
                     recur acc
@@ -180,11 +214,17 @@
           :tests $ []
             %{} 'TestEntry (:name |matched-subsequence)
               :code $ quote $ assert= true
-                &map:get (parse-by-letter |abc |ac) :matches?
+                match
+                  calcit.core/get (parse-by-letter |abc |ac) :matches?
+                  (:some value) value
+                  (:none) nil
               :tags $ #{} :unit
             %{} 'TestEntry (:name |unmatched-query-suffix)
               :code $ quote $ assert= false
-                &map:get (parse-by-letter |abc |abcd) :matches?
+                match
+                  calcit.core/get (parse-by-letter |abc |abcd) :matches?
+                  (:some value) value
+                  (:none) nil
               :tags $ #{} :unit
         'parse-by-letter-iter $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn parse-by-letter-iter (acc xs ys)
@@ -194,8 +234,8 @@
                 conj acc $ [] :rest $ apply str xs
                 if
                   =
-                    option:unwrap-or (first xs) nil
-                    option:unwrap-or (first ys) nil
+                    option:unwrap $ first xs
+                    option:unwrap $ first ys
                   recur
                     conj acc $ [] :hit $ option:unwrap-or (first xs) |
                     rest xs
@@ -233,13 +273,19 @@
           :schema $ :: 'Fn $ {}
             :args $ [] 'String 'String
             :return $ :: 'Map 'Tag 'Dynamic
+          :tests $ [] $ %{} 'TestEntry (:name |emoji-before-word)
+            :code $ quote $ assert=
+              {} (:matches? true) (:text "|😀ab😀")
+                :chunks $ [] ([] :rest "|😀a") ([] :hit |b) ([] :rest "|😀")
+              parse-by-word "|😀ab😀" |b
+            :tags $ #{} :unit
         'parse-by-word-iter $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn parse-by-word-iter (acc text ys)
             if (empty? ys)
               if (blank? text) acc $ conj acc $ [] :rest text
               let
                   y0 $ option:unwrap-or (first ys) |
-                  p $ unsafe-coerce (.!indexOf text y0) 'Number
+                  p $ .unwrap-or (str-find-index text y0) -1
                 cond
                     > p 0
                     recur
@@ -259,21 +305,32 @@
             :args $ []
               :: 'List $ :: 'List 'Dynamic
               , 'String $ :: 'List 'String
-            :features $ #{} :js-ffi
             :return $ :: 'List $ :: 'List 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.core
-          :require $ [] clojure.string :as string
+          :require $ clojure.string :as string
     'fuzzy-filter.main $ %{} 'FileEntry
       :defs $ {}
         '*reel $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *reel
+          :code $ quote $ defref *reel
             -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
           :examples $ []
-          :schema $ :: 'Ref 'Dynamic
+          :schema $ :: 'Ref $ :: 'Map 'Tag 'Dynamic
+        'apply-reel-op $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn apply-reel-op (store op op-id op-time)
+            updater
+              decode-map-as store $ :: 'Map 'Tag 'Dynamic
+              if (enum? op) op $ raise "|Fuzzy Filter operation must be an Enum"
+              decode-map-as op-id 'String
+              decode-map-as op-time 'Number
+          :examples $ []
+          :schema $ :: 'Fn $ {}
+            :args $ [] 'Dynamic 'Dynamic 'Dynamic 'Dynamic
+            :return $ :: 'Map 'Tag 'Dynamic
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op) (; println |Dispatch: op)
-            reset! *reel $ reel-updater updater @*reel op
+            reset! *reel $ reel-updater apply-reel-op @*reel op
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ [] 'Enum
@@ -283,12 +340,16 @@
             println "|Running mode:" $ if config/dev? |dev |release
             if config/dev? $ load-console-formatter!
             render-app!
-            add-watch *reel :changes $ fn (r p) (render-app!)
+            add-watch! *reel :changes $ fn (r p) (render-app!)
             listen-devtools! |a dispatch!
             js-ffi.browser/add-event-listener! |beforeunload $ fn (event) (persist-storage!)
             js-ffi.browser/set-interval! persist-storage! $ * 1000 60
             match
-              js-ffi.browser/storage-get $ &map:get config/site :storage
+              js-ffi.browser/storage-get $ decode-map-as
+                match (calcit.core/get config/site :storage)
+                  (:some value) value
+                  (:none) nil
+                , 'String
               (:none) &unit
               (:some raw)
                 dispatch! $ :: :hydrate-storage $ parse-cirru-edn raw
@@ -308,8 +369,18 @@
             :features $ #{} :js-ffi
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
-            js-ffi.browser/storage-set! (&map:get config/site :storage)
-              format-cirru-edn $ &map:get @*reel :store
+            js-ffi.browser/storage-set!
+              decode-map-as
+                match (calcit.core/get config/site :storage)
+                  (:some value) value
+                  (:none) nil
+                , 'String
+              format-cirru-edn $ match
+                calcit.core/get
+                  decode-map-as @*reel $ :: 'Map 'Dynamic 'Dynamic
+                  , :store
+                (:some value) value
+                (:none) nil
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
@@ -317,18 +388,21 @@
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (nil? build-errors)
-              do (remove-watch *reel :changes) (clear-cache!)
-                add-watch *reel :changes $ fn (reel prev) (render-app!)
-                reset! *reel $ refresh-reel @*reel schema/store updater
+              do (remove-watch! *reel :changes) (clear-cache!)
+                add-watch! *reel :changes $ fn (reel prev) (render-app!)
+                reset! *reel $ decode-map-as (refresh-reel @*reel schema/store apply-reel-op) (:: 'Map 'Tag 'Dynamic)
                 hud! |ok~ |Ok
               hud! |error build-errors
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
             :features $ #{} :js-ffi
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
-            render! (mount-target) (comp-container @*reel) dispatch!
+            render! (mount-target) (comp-container @*reel)
+              fn (op)
+                if (enum? op) (dispatch! op) (raise "|Fuzzy Filter renderer operation must be an Enum")
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
@@ -336,15 +410,14 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.main
           :require
-            [] respo.core :refer $ [] render! clear-cache! realize-ssr!
-            [] fuzzy-filter.comp.container :refer $ [] comp-container
-            [] fuzzy-filter.updater :refer $ [] updater
-            [] fuzzy-filter.schema :as schema
-            [] reel.util :refer $ [] listen-devtools!
-            [] reel.core :refer $ [] reel-updater refresh-reel
-            [] reel.schema :as reel-schema
-            [] cljs.reader :refer $ [] read-string
-            [] fuzzy-filter.config :as config
+            respo.core :refer $ render! clear-cache! realize-ssr!
+            fuzzy-filter.comp.container :refer $ comp-container
+            fuzzy-filter.updater :refer $ updater
+            fuzzy-filter.schema :as schema
+            reel.util :refer $ listen-devtools!
+            reel.core :refer $ reel-updater refresh-reel
+            reel.schema :as reel-schema
+            fuzzy-filter.config :as config
             |./calcit.build-errors :default build-errors
             |bottom-tip :default hud!
     'fuzzy-filter.schema $ %{} 'FileEntry
@@ -364,10 +437,16 @@
         %{} 'CodeEntry (:doc |)
           :code $ quote $ defn updater (store op op-id op-time)
             match op
-              (:states cursor s) (update-states store cursor s)
+              (:states cursor s)
+                decode-map-as
+                  update-states store
+                    decode-map-as cursor $ :: 'List 'Dynamic
+                    , s
+                  :: 'Map 'Tag 'Dynamic
               (:content d) (assoc store :content d)
               (:query d) (assoc store :query d)
-              (:hydrate-storage d) d
+              (:hydrate-storage d)
+                decode-map-as d $ :: 'Map 'Tag 'Dynamic
               _ $ do (eprintln "|Unknown op:" op) store
           :examples $ []
           :schema $ :: 'Fn $ {}
@@ -375,4 +454,4 @@
             :return $ :: 'Map 'Tag 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.updater
-          :require $ [] respo.cursor :refer $ [] update-states
+          :require $ respo.cursor :refer $ update-states
