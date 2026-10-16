@@ -4,7 +4,7 @@ import * as c from "../js-out/calcit.core.mjs";
 import { comp_container } from "../js-out/fuzzy-filter.comp.container.mjs";
 import { store } from "../js-out/fuzzy-filter.schema.mjs";
 import { updater } from "../js-out/fuzzy-filter.updater.mjs";
-import { RespoEvent } from "../js-out/respo.schema.mjs";
+import { event__GT_edn } from "../js-out/respo.util.format.mjs";
 import {
   component_$q_, component_tree, element_$q_, element_children,
   element_name, element_event, element_attrs, render_node_value,
@@ -43,9 +43,7 @@ const inputs = (component) => {
 
 for (const [index, key, value] of [[0, tags.content, 'abc'], [1, tags.query, 'ac']]) {
   test(`actual ${key.value} input accepts two arguments and dispatches a single Enum`, () => {
-    const fields = RespoEvent.fields.flatMap(field => [field,
-      field === tags.value ? value : field === tags.type ? tags.input : null]);
-    const event = c._$n__PCT__$M_(RespoEvent, ...fields);
+    const event = event__GT_edn({ type: "input", target: { value, checked: false } });
     const rendered = inputs(render(store));
     assert.equal(rendered.length, 2);
     const handler = read(element_event(rendered[index]), tags.input);

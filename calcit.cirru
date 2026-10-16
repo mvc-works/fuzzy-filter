@@ -39,17 +39,23 @@
                     input $ {} (:style ui/input) (:value content) (:placeholder |text)
                       :on-input $ fn (e d!)
                         hint-fn $ {}
-                          :args $ [] (quote respo.schema/RespoEvent) (quote Dynamic)
-                          :return $ quote Dynamic
-                        d! $ :: :content $ :value e
+                          :args $ [] (:: 'Map 'Tag 'Dynamic) 'Dynamic
+                          :return 'Unit
+                        d! $ :: :content $ decode-map-as
+                          .unwrap $ get e :value
+                          , 'String
+                        , &unit
                   =< nil 8
                   div ({})
                     input $ {} (:style ui/input) (:value query) (:placeholder |query)
                       :on-input $ fn (e d!)
                         hint-fn $ {}
-                          :args $ [] (quote respo.schema/RespoEvent) (quote Dynamic)
-                          :return $ quote Dynamic
-                        d! $ :: :query $ :value e
+                          :args $ [] (:: 'Map 'Tag 'Dynamic) 'Dynamic
+                          :return 'Unit
+                        d! $ :: :query $ decode-map-as
+                          .unwrap $ get e :value
+                          , 'String
+                        , &unit
                 let
                     result $ parse-by-letter content query
                     word-result $ parse-by-word content query
@@ -309,10 +315,21 @@
           :code $ quote $ defref *reel
             -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
           :examples $ []
-          :schema $ :: 'Ref 'Dynamic
+          :schema $ :: 'Ref $ :: 'Map 'Tag 'Dynamic
+        'apply-reel-op $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn apply-reel-op (store op op-id op-time)
+            updater
+              decode-map-as store $ :: 'Map 'Tag 'Dynamic
+              if (enum? op) op $ raise "|Fuzzy Filter operation must be an Enum"
+              decode-map-as op-id 'String
+              decode-map-as op-time 'Number
+          :examples $ []
+          :schema $ :: 'Fn $ {}
+            :args $ [] 'Dynamic 'Dynamic 'Dynamic 'Dynamic
+            :return $ :: 'Map 'Tag 'Dynamic
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op) (; println |Dispatch: op)
-            reset! *reel $ reel-updater updater @*reel op
+            reset! *reel $ reel-updater apply-reel-op @*reel op
             , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
@@ -373,16 +390,19 @@
             if (nil? build-errors)
               do (remove-watch! *reel :changes) (clear-cache!)
                 add-watch! *reel :changes $ fn (reel prev) (render-app!)
-                reset! *reel $ refresh-reel @*reel schema/store updater
+                reset! *reel $ decode-map-as (refresh-reel @*reel schema/store apply-reel-op) (:: 'Map 'Tag 'Dynamic)
                 hud! |ok~ |Ok
               hud! |error build-errors
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
             :features $ #{} :js-ffi
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
-            render! (mount-target) (comp-container @*reel) dispatch!
+            render! (mount-target) (comp-container @*reel)
+              fn (op)
+                if (enum? op) (dispatch! op) (raise "|Fuzzy Filter renderer operation must be an Enum")
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
@@ -397,7 +417,6 @@
             reel.util :refer $ listen-devtools!
             reel.core :refer $ reel-updater refresh-reel
             reel.schema :as reel-schema
-            cljs.reader :refer $ read-string
             fuzzy-filter.config :as config
             |./calcit.build-errors :default build-errors
             |bottom-tip :default hud!

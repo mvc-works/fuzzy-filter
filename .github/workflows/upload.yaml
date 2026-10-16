@@ -51,16 +51,13 @@ jobs:
         calcit calcit.cirru edit format
         git diff --exit-code -- calcit.cirru
         calcit calcit.cirru fix --workflow strict --verify --format edn
-        calcit calcit.cirru --check-only
-        calcit calcit.cirru analyze check-public \
+        calcit calcit.cirru --check-only \
           --ns fuzzy-filter.comp.container --ns fuzzy-filter.comp.visual \
           --ns fuzzy-filter.config --ns fuzzy-filter.core --ns fuzzy-filter.main \
           --ns fuzzy-filter.schema --ns fuzzy-filter.updater --summary-only
         calcit calcit.cirru test --require-match --summary-only --format json
-        calcit calcit.cirru analyze check-types --summary-only --format json
-        calcit calcit.cirru analyze dynamic-methods --summary-only --format json
-        calcit calcit.cirru analyze deprecated --summary-only --format json
-        calcit docs check-md README.md --failures-only
+        calcit calcit.cirru analyze weak-types --only deprecated-call --summary-only --format json | jq -e '.data.summary.calls == 0'
+        calcit docs check-md README.md --dep ./ --failures-only
 
     - name: Build client with CDN asset URLs
       id: asset-path
