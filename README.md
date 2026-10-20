@@ -30,9 +30,9 @@ Workflow https://github.com/calcit-lang/respo-calcit-workflow
 
 ### 开发验证
 
-当前迁移候选配对正式 Calcit / `@calcit/procs` 0.30.0，依赖使用正式 tag，
-CLI 与依赖不使用 alpha/hash；模块准备正式 0.0.15，不再沿用旧 alpha 版本号。
-当前仅是候选，须通过新 PR 的干净 CI、实际审查及合并后 main CI 才发布新 tag。
+当前候选配对 CLI / `@calcit/procs` **0.30.1-alpha.5**，模块准备正式 patch **0.0.16**。
+正式 0.30.1 发布产物尚未齐全，因此暂用完整配对的 alpha.5；共享模块仍使用正式 tag，不使用 main/hash。
+须通过干净 CI、实际审查和合并后 main CI，再发布新 tag。
 仍使用 `calcit-lang/js-ffi` 的类型化浏览器适配器处理挂载节点、本地存储和定时器。仅使用 `calcit.cirru`、`deps.cirru`，不要恢复或提交旧的 `compact.cirru`、`package.cirru`；CI 也会拒绝被 Git 忽略但仍存在的旧文件。运行以下命令验证 Calcit 测试及生成的 JavaScript：
 
 ```bash
@@ -43,34 +43,21 @@ calcit calcit.cirru js
 node --test scripts/fuzzy-filter.test.mjs
 ```
 
-直接与传递依赖已收敛为 JS-FFI 0.2.3、Respo 0.16.120、UI 0.7.39、Reel 0.6.37；
-本地只读正式模块检查不替代干净 CI 的 strict Caps 安装。
-浏览器入口显式声明 `mode: js` / `target: browser`，公共定义检查覆盖全部 7 个业务命名空间。输入回调接收两个参数，读取 `RespoEvent` 字段并派发单参数 Enum。
-
-15 处程序和 2 处原测试 Map 读取改用公开 `get`/Option，保留缺失和存在 nil 的结果。
-在实际使用处检查 store、文本、chunks、cursor 和恢复的 Map；不把开放值断言成已验证类型。
-词匹配改用 Calcit `str-find-index`，与新版 Unicode 字符切片保持一致，
-修复 emoji 出现在命中词前时的分段错位；旧版拆分代理项的结果不再保留。
-该核心路径不再依赖 JS FFI 或 Number 强转，可以在 native/JS 两端执行。
-`dispatch!` 返回 Unit，不泄漏新状态。原持久化 key、解析结果字段和界面行为不变。
-Reel 0.6.37 已正式发布。应用的业务 updater 仍要求 Map/Enum/String/Number，
-旧 Reel 的开放回调通过单一 `apply-reel-op` 入口实际解码并复用于派发和热刷新，
-不放宽业务签名；Ref 收紧为实际 Tag-keyed Map。renderer 先检查 Enum，
-热刷新保留原 watch/cache/reel/HUD 顺序，最终明确返回 Unit。
-本地完整 strict exit0、workflow/preflight passed、诊断为空；不以普通检查代替。
-本地验收：全部 203 个定义与全部 7 个业务命名空间通过；
-原 2 项定义测试加 1 项实际 Unicode 回归、原 7 项 Node 业务回归通过。
-新旧 288 组匹配差分中 282 组相同，6 组差异均涉及 emoji，体现新版 Unicode
-字符语义，而不是声称所有输出逐字一致。生产 CDN 构建、immutable 安装、文档与格式检查通过。
-真实页面曾暴露输入回调错误声明为名义 RespoEvent，导致对实际事件 Map 调用 nthAt。
-现在按框架 DOM listener 的 Map 合同读取并检查 String value，回调返回 Unit。
-原两个输入测试直接使用框架 `event->edn` 构造事件，不再人工伪造 Struct；
-原 7 项测试、所有断言和回调次数保留，没有新增测试脚本或框架。
-真实隔离 localhost 页面通过 emoji 输入、成功/失败匹配和刷新恢复，无 console error；
-仅使用合成内容，页面/Vite 已关闭。本轮未专门操作 HMR 或 devtools 控制面板。
-仍有开放 schema Dynamic，包括旧 Reel 必需的四参数入口；该入口立即解码，
-不把它冒称已经静态闭合，也不放宽或新增类型预算。
-0.30.1-alpha.4 仅对核心 6 个定义做静态探测通过，未更改配对运行时或声称完整 0.30.1 验收。
+直接与传递依赖收敛为 JS-FFI 0.2.3、Respo 0.16.122、UI 0.7.41、Reel 0.6.39，
+与 Termina/Cumulo 当前正式图对齐。本轮不执行本地 Caps；复用模块不替代独立 CI 的 strict 安装。
+浏览器入口显式声明 `mode: js` / `target: browser`，冷检查覆盖全部 7 个业务命名空间。
+沿用 0.0.15 的 Unicode 字符语义，核心匹配可在 native/JS 两端执行，本轮不修改其公开算法或返回格式。
+Demo 内部改用真实 Store、Op、State/Record，字段读取不再每次渲染重复解码；
+移除旧 Reel 四参数 Dynamic 桥接，派发、控制和刷新直接走正式 typed API。
+存档入口统一检查旧 Map，保存仍写原 Map 格式和原 key；公开匹配函数仍返回原来的 Map/chunks 格式。
+renderer 的真实 Dynamic 入口先检查 Enum，输入回调使用真实 Map/dispatch 合同并返回 Unit。
+热刷新保留原 watch/cache/reel/HUD 顺序。
+输入测试仍使用框架 `event->edn` 构造实际事件 Map，不伪造名义 RespoEvent。
+公开匹配结果和 UI 状态树仍保留真实异构数据边界；不把它们冒称全部静态闭合，不放宽或新增预算。
+原 3 项 native、7 项 Node 回归和全部断言保留；Node 渲染夹具改用真实 typed Reel，操作按实际 dispatch 解码。
+额外一次性比较了 288 组原 0.30.0 的 Unicode/空查询结果，公开匹配行为完全一致；没有添加新的验证脚本。
+真实隔离 localhost 页面已验收中文/emoji 输入、匹配成功/失败和刷新恢复，无 console error/warn；
+仅使用合成内容，页面与 Vite 已关闭。本轮未专门操作 HMR 或 devtools 控制面板。
 
 ### Frontend deployment
 
@@ -82,7 +69,7 @@ VITE_BASE_URL=https://cos-sh.tiye.me/mvc-works/fuzzy-filter/ yarn build
 
 上传校验使用正式 COS Action v1.2.0 的内置 verify 配置，通过
 `public-base-url` 启用，不添加额外 CDN 校验脚本。Action 固定到该正式版本
-的已审查提交。原共享字体、图标与服务器部署路径不变。
+的精确正式 tag。原共享字体、图标与服务器部署路径不变。
 
 PR 预览路径为 `mvc-works/fuzzy-filter/pr/<number>/<run-id>/<attempt>/`，
 每次运行和重试隔离，生产前缀不变。每个 PR 及生产使用独立队列，保留等待
