@@ -13,24 +13,10 @@
         %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (reel)
             let
-                store $ decode-map-as
-                  match (calcit.core/get reel :store)
-                    (:some value) value
-                    (:none) nil
-                  :: 'Map 'Dynamic 'Dynamic
-                states $ match (calcit.core/get store :states)
-                  (:some value) value
-                  (:none) nil
-                content $ decode-map-as
-                  match (calcit.core/get store :content)
-                    (:some value) value
-                    (:none) nil
-                  , 'String
-                query $ decode-map-as
-                  match (calcit.core/get store :query)
-                    (:some value) value
-                    (:none) nil
-                  , 'String
+                store $ :store reel
+                states $ :states store
+                content $ :content store
+                query $ :query store
               div
                 {} $ :style $ merge ui/global ui/column
                   {} $ :padding |16
@@ -39,7 +25,10 @@
                     input $ {} (:style ui/input) (:value content) (:placeholder |text)
                       :on-input $ fn (e d!)
                         hint-fn $ {}
-                          :args $ [] (:: 'Map 'Tag 'Dynamic) 'Dynamic
+                          :args $ [] (:: 'Map 'Tag 'Dynamic)
+                            :: 'Fn $ {}
+                              :args $ [] 'Dynamic
+                              :return 'Unit
                           :return 'Unit
                         d! $ :: :content $ decode-map-as
                           .unwrap $ get e :value
@@ -50,7 +39,10 @@
                     input $ {} (:style ui/input) (:value query) (:placeholder |query)
                       :on-input $ fn (e d!)
                         hint-fn $ {}
-                          :args $ [] (:: 'Map 'Tag 'Dynamic) 'Dynamic
+                          :args $ [] (:: 'Map 'Tag 'Dynamic)
+                            :: 'Fn $ {}
+                              :args $ [] 'Dynamic
+                              :return 'Unit
                           :return 'Unit
                         d! $ :: :query $ decode-map-as
                           .unwrap $ get e :value
@@ -92,10 +84,10 @@
                               (:none) nil
                             :: 'List $ :: 'List 'Dynamic
                           {} $ :color $ hsl 0 0 70
-                when dev? $ comp-reel (>> states :reel) reel $ {}
+                when dev? $ comp-typed-reel (>> states :reel) reel $ {}
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
+            :args $ [] $ :: 'reel.typed/State 'fuzzy-filter.schema/Op 'fuzzy-filter.schema/Store
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.comp.container
           :require
@@ -103,7 +95,7 @@
             respo-ui.core :as ui
             respo.core :refer $ defcomp >> <> div button textarea span input pre code
             respo.comp.space :refer $ =<
-            reel.comp.reel :refer $ comp-reel
+            reel.comp.reel :refer $ comp-typed-reel
             fuzzy-filter.config :refer $ dev?
             fuzzy-filter.core :refer $ parse-by-letter parse-by-word
             fuzzy-filter.comp.visual :refer $ comp-visual
@@ -312,28 +304,22 @@
     'fuzzy-filter.main $ %{} 'FileEntry
       :defs $ {}
         '*reel $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defref *reel
-            -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
+          :code $ quote $ defref *reel (schema/new-reel schema/store)
           :examples $ []
-          :schema $ :: 'Ref $ :: 'Map 'Tag 'Dynamic
-        'apply-reel-op $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn apply-reel-op (store op op-id op-time)
-            updater
-              decode-map-as store $ :: 'Map 'Tag 'Dynamic
-              if (enum? op) op $ raise "|Fuzzy Filter operation must be an Enum"
-              decode-map-as op-id 'String
-              decode-map-as op-time 'Number
-          :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] 'Dynamic 'Dynamic 'Dynamic 'Dynamic
-            :return $ :: 'Map 'Tag 'Dynamic
+          :schema $ :: 'Ref $ :: 'reel.typed/State 'fuzzy-filter.schema/Op 'fuzzy-filter.schema/Store
         'dispatch! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn dispatch! (op) (; println |Dispatch: op)
-            reset! *reel $ reel-updater apply-reel-op @*reel op
+          :code $ quote $ defn dispatch! (op)
+            if (enum? op)
+              match (typed/decode-control op)
+                (:some control)
+                  reset! *reel $ typed/apply-control updater @*reel control
+                (:none)
+                  reset! *reel $ typed/record-op updater @*reel (schema/decode-op op) (generate-id!) (unix-time-ms)
+              raise |Expected-Fuzzy-Filter-operation
             , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ [] 'Enum
+            :args $ [] 'Dynamic
             :features $ #{} :js-ffi
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
@@ -375,22 +361,17 @@
                   (:some value) value
                   (:none) nil
                 , 'String
-              format-cirru-edn $ match
-                calcit.core/get
-                  decode-map-as @*reel $ :: 'Map 'Dynamic 'Dynamic
-                  , :store
-                (:some value) value
-                (:none) nil
+              format-cirru-edn $ &struct:to-map $ :store @*reel
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
             :features $ #{} :js-ffi
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
-            if (nil? build-errors)
+            if (js-nullish? build-errors)
               do (remove-watch! *reel :changes) (clear-cache!)
                 add-watch! *reel :changes $ fn (reel prev) (render-app!)
-                reset! *reel $ decode-map-as (refresh-reel @*reel schema/store apply-reel-op) (:: 'Map 'Tag 'Dynamic)
+                reset! *reel $ typed/refresh updater @*reel schema/store
                 hud! |ok~ |Ok
               hud! |error build-errors
             , &unit
@@ -400,9 +381,7 @@
             :features $ #{} :js-ffi
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
-            render! (mount-target) (comp-container @*reel)
-              fn (op)
-                if (enum? op) (dispatch! op) (raise "|Fuzzy Filter renderer operation must be an Enum")
+            render! (mount-target) (comp-container @*reel) dispatch!
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
@@ -415,43 +394,89 @@
             fuzzy-filter.updater :refer $ updater
             fuzzy-filter.schema :as schema
             reel.util :refer $ listen-devtools!
-            reel.core :refer $ reel-updater refresh-reel
-            reel.schema :as reel-schema
             fuzzy-filter.config :as config
             |./calcit.build-errors :default build-errors
             |bottom-tip :default hud!
+            reel.typed :as typed
+            respo.util :refer $ generate-id!
     'fuzzy-filter.schema $ %{} 'FileEntry
-      :defs $ {} $ 'store
-        %{} 'CodeEntry (:doc |)
-          :code $ quote $ def store
-            {}
-              :states $ {}
-              :content "|this and that to search"
-              :query "|that search"
+      :defs $ {}
+        'Op $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defenum Op
+            :states (:: 'List 'Dynamic) 'Dynamic
+            :content 'String
+            :query 'String
+            :hydrate-storage 'fuzzy-filter.schema/Store
           :examples $ []
-          :schema $ :: 'Map 'Tag 'Dynamic
+          :schema $ :: 'EnumDef
+        'Store $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct Store
+            :states $ :: 'Map 'Dynamic 'Dynamic
+            :content 'String
+            :query 'String
+          :examples $ []
+          :schema $ :: 'StructDef
+        'decode-op $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn decode-op (op)
+            match op
+              (:states cursor data)
+                Op :states
+                  decode-map-as cursor $ :: 'List 'Dynamic
+                  , data
+              (:content value)
+                Op :content $ decode-map-as value 'String
+              (:query value)
+                Op :query $ decode-map-as value 'String
+              (:hydrate-storage data)
+                Op :hydrate-storage $ normalize-store data
+              _ $ raise |Unknown-Fuzzy-Filter-operation
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'fuzzy-filter.schema/Op)
+            :args $ [] 'Enum
+        'empty-records $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ def empty-records ([])
+          :examples $ []
+          :schema $ :: 'List $ :: 'reel.typed/Record 'fuzzy-filter.schema/Op
+        'new-reel $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn new-reel (base)
+            typed/State :base base :store base :records empty-records :pointer (Option :none) :stopped? false :display? false :merged? false
+          :examples $ []
+          :schema $ :: 'Fn $ {}
+            :args $ [] 'fuzzy-filter.schema/Store
+            :return $ :: 'reel.typed/State 'fuzzy-filter.schema/Op 'fuzzy-filter.schema/Store
+        'normalize-store $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn normalize-store (raw)
+            decode-map-as
+              if (struct? raw) (&struct:to-map raw) raw
+              , 'Store
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'fuzzy-filter.schema/Store)
+            :args $ [] 'Dynamic
+        'store $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ def store
+            Store :states ({}) :content "|this and that to search" :query "|that search"
+          :examples $ []
+          :schema $ :: 'fuzzy-filter.schema/Store
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.schema
+          :require $ reel.typed :as typed
     'fuzzy-filter.updater $ %{} 'FileEntry
       :defs $ {} $ 'updater
         %{} 'CodeEntry (:doc |)
           :code $ quote $ defn updater (store op op-id op-time)
             match op
-              (:states cursor s)
-                decode-map-as
-                  update-states store
-                    decode-map-as cursor $ :: 'List 'Dynamic
-                    , s
-                  :: 'Map 'Tag 'Dynamic
-              (:content d) (assoc store :content d)
-              (:query d) (assoc store :query d)
-              (:hydrate-storage d)
-                decode-map-as d $ :: 'Map 'Tag 'Dynamic
-              _ $ do (eprintln "|Unknown op:" op) store
+              (:states cursor data)
+                let
+                    states $ update-state-tree (:states store) cursor data
+                  if (map? states) (assoc store :states states) (raise |Invalid-state-tree)
+              (:content value) (assoc store :content value)
+              (:query value) (assoc store :query value)
+              (:hydrate-storage data) data
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Enum 'String 'Number
-            :return $ :: 'Map 'Tag 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'fuzzy-filter.schema/Store)
+            :args $ [] 'fuzzy-filter.schema/Store 'fuzzy-filter.schema/Op 'String 'Number
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.updater
-          :require $ respo.cursor :refer $ update-states
+          :require
+            respo.cursor :refer $ update-state-tree
+            fuzzy-filter.schema :as schema

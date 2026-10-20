@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import * as c from "../js-out/calcit.core.mjs";
 import { comp_container } from "../js-out/fuzzy-filter.comp.container.mjs";
-import { store } from "../js-out/fuzzy-filter.schema.mjs";
+import { store, new_reel, decode_op } from "../js-out/fuzzy-filter.schema.mjs";
 import { updater } from "../js-out/fuzzy-filter.updater.mjs";
 import { event__GT_edn } from "../js-out/respo.util.format.mjs";
 import {
@@ -23,7 +23,7 @@ import {
 const formatResult = (text, query) => format_cirru_edn(parse_by_letter(text, query));
 const tags = c.init_tags(['store', 'input', 'value', 'type', 'content', 'query']);
 const read = (value, key) => c.option_$o_unwrap(c.get(value, key));
-const render = (value) => comp_container(c._$n__$M_(tags.store, value));
+const render = (value) => comp_container(new_reel(value));
 const inputs = (component) => {
   const found = [];
   const walk = (node) => {
@@ -52,7 +52,7 @@ for (const [index, key, value] of [[0, tags.content, 'abc'], [1, tags.query, 'ac
     handler(event, (...args) => {
       assert.equal(args.length, 1);
       assert.ok(c.enum_$q_(args[0]));
-      updated = updater(store, args[0], 'test-op', 0);
+      updated = updater(store, decode_op(args[0]), 'test-op', 0);
     });
     assert.equal(read(updated, key), value);
     const rerendered = inputs(render(updated));
