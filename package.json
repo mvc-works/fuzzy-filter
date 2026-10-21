@@ -1,6 +1,6 @@
 {
   "name": "fuzzy-filter",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "packageManager": "yarn@4.18.0",
   "description": "Some tiny text filter function",
   "main": "index.js",
@@ -20,6 +20,6 @@
     "vite": "8.3.3"
   },
   "dependencies": {
-    "@calcit/procs": "0.30.1-alpha.5"
+    "@calcit/procs": "0.30.1"
   }
 }
