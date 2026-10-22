@@ -6,6 +6,16 @@ Fuzzy Filter
 
 Demo http://r.tiye.me/mvc-works/fuzzy-filter/
 
+### 0.0.17 候选：正式 Calcit 0.30.1
+
+使用者影响：CLI 与 `@calcit/procs` 一起升级到正式 **0.30.1**，同步依赖图为
+Reel0.6.41、UI0.8.0、Respo0.16.124、JS-FFI0.2.5。请重新安装模块、生成JS并刷新，
+不要混装旧alpha缓存；候选tag未发布前不要用main/hash代替。
+相对0.0.16不改Snapshot、公开匹配算法/Map返回格式、Unicode语义或Demo存档格式/key。
+本轮以all-defs替代手写namespace清单，保留完整strict、原3项native及7项Node测试、
+README示例门禁、COS action内置verify和原前端部署路径。不新增验证脚本、预算或兼容强转。
+正式图的CI和实际Demo验收以对应PR结果为准，库绿色不代表所有消费者已完成迁移。
+
 ### 使用
 
 ```cirru
@@ -30,22 +40,23 @@ Workflow https://github.com/calcit-lang/respo-calcit-workflow
 
 ### 开发验证
 
-当前候选配对 CLI / `@calcit/procs` **0.30.1-alpha.5**，模块准备正式 patch **0.0.16**。
-正式 0.30.1 发布产物尚未齐全，因此暂用完整配对的 alpha.5；共享模块仍使用正式 tag，不使用 main/hash。
+当前候选配对 CLI / `@calcit/procs` **0.30.1**，模块准备正式 patch **0.0.17**。
+共享模块固定上述正式 tag，不使用 main/hash；下文0.0.16的类型/交互迁移说明属于已发布历史。
 须通过干净 CI、实际审查和合并后 main CI，再发布新 tag。
 仍使用 `calcit-lang/js-ffi` 的类型化浏览器适配器处理挂载节点、本地存储和定时器。仅使用 `calcit.cirru`、`deps.cirru`，不要恢复或提交旧的 `compact.cirru`、`package.cirru`；CI 也会拒绝被 Git 忽略但仍存在的旧文件。运行以下命令验证 Calcit 测试及生成的 JavaScript：
 
 ```bash
 caps --strict --ci
-calcit calcit.cirru --check-only
+calcit calcit.cirru --check-only --all-defs
 calcit calcit.cirru test --require-match
 calcit calcit.cirru js
 node --test scripts/fuzzy-filter.test.mjs
 ```
 
-直接与传递依赖收敛为 JS-FFI 0.2.3、Respo 0.16.122、UI 0.7.41、Reel 0.6.39，
-与 Termina/Cumulo 当前正式图对齐。本轮不执行本地 Caps；复用模块不替代独立 CI 的 strict 安装。
-浏览器入口显式声明 `mode: js` / `target: browser`，冷检查覆盖全部 7 个业务命名空间。
+直接与传递依赖收敛为 JS-FFI 0.2.5、Respo 0.16.124、UI 0.8.0、Reel 0.6.41。
+本轮不执行本地 Caps；本地复用模块不替代独立 CI 的 strict 安装。
+浏览器入口显式声明 `mode: js` / `target: browser`，all-defs覆盖全部定义，包含业务和元数据命名空间。
+以下为历史0.0.16（CLI/procs alpha.5）的迁移与验收记录，不作为0.0.17的新验收结果：
 沿用 0.0.15 的 Unicode 字符语义，核心匹配可在 native/JS 两端执行，本轮不修改其公开算法或返回格式。
 Demo 内部改用真实 Store、Op、State/Record，字段读取不再每次渲染重复解码；
 移除旧 Reel 四参数 Dynamic 桥接，派发、控制和刷新直接走正式 typed API。

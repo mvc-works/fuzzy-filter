@@ -51,10 +51,7 @@ jobs:
         calcit calcit.cirru edit format
         git diff --exit-code -- calcit.cirru
         calcit calcit.cirru fix --workflow strict --verify --format edn
-        calcit calcit.cirru --check-only \
-          --ns fuzzy-filter.comp.container --ns fuzzy-filter.comp.visual \
-          --ns fuzzy-filter.config --ns fuzzy-filter.core --ns fuzzy-filter.main \
-          --ns fuzzy-filter.schema --ns fuzzy-filter.updater --summary-only
+        calcit calcit.cirru --check-only --all-defs
         calcit calcit.cirru test --require-match --summary-only --format json
         calcit calcit.cirru analyze weak-types --only deprecated-call --summary-only --format json | jq -e '.data.summary.calls == 0'
         calcit docs check-md README.md --dep ./ --failures-only
