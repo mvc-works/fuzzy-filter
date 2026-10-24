@@ -18,7 +18,7 @@
                 content $ :content store
                 query $ :query store
               div
-                {} $ :style $ merge ui/global ui/column
+                {} $ :style $ .merge ui/global ui/column
                   {} $ :padding |16
                 div ({})
                   div ({})
@@ -109,11 +109,14 @@
               list->
                 {} $ :style $ {} (:display :inline-block)
                 -> pieces $ map-indexed $ fn (idx chunk)
+                  hint-fn $ {}
+                    :args $ [] 'Number $ :: 'List 'Dynamic
+                    :return $ :: 'List 'Dynamic
                   [] idx $ span $ {}
-                    :inner-text $ option:unwrap-or (last chunk) |
-                    :style $ merge style-base $ if
-                      = :hit $ option:unwrap-or (first chunk) :missed
-                      merge
+                    :inner-text $ .unwrap-or (last chunk) |
+                    :style $ .merge style-base $ if
+                      = :hit $ .unwrap-or (first chunk) :missed
+                      .merge
                         {} $ :font-weight :bold
                         , style-hit
                       , style-rest
@@ -137,7 +140,7 @@
           :schema $ :: 'Set 'String
         'dev? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def dev?
-            = |dev $ option:unwrap-or (get-env |mode) |release
+            = |dev $ .unwrap-or (get-env |mode) |release
           :examples $ []
           :schema $ :: 'Bool
         'site $ %{} 'CodeEntry (:doc |)
@@ -161,23 +164,23 @@
             if (empty? xs)
               if (empty? buffer) acc $ conj acc buffer
               let
-                  x0 $ option:unwrap $ first xs
+                  x0 $ .unwrap $ first xs
                 if (empty? buffer)
                   recur acc x0 $ rest xs
                   if
                     =
                       decode-map-as
-                        option:unwrap-or (first buffer) :unknown
+                        .unwrap-or (first buffer) :unknown
                         , 'Tag
                       decode-map-as
-                        option:unwrap-or (first x0) :unknown
+                        .unwrap-or (first x0) :unknown
                         , 'Tag
                     recur acc
                       []
-                        option:unwrap-or (first buffer) nil
+                        .unwrap-or (first buffer) nil
                         str
-                          option:unwrap-or (last buffer) |
-                          option:unwrap-or (last x0) |
+                          .unwrap-or (last buffer) |
+                          .unwrap-or (last x0) |
                       rest xs
                     recur (conj acc buffer) x0 $ rest xs
           :examples $ []
@@ -196,7 +199,10 @@
               {}
                 :matches? $ not $ any? results
                   fn (x)
-                    = :missed $ option:unwrap-or (first x) :missed
+                    hint-fn $ {}
+                      :args $ [] $ :: 'List 'Dynamic
+                      :return 'Bool
+                    = :missed $ .unwrap-or (first x) :missed
                 :chunks results
                 :text text
           :examples $ []
@@ -226,20 +232,20 @@
                 conj acc $ [] :rest $ apply str xs
                 if
                   =
-                    option:unwrap $ first xs
-                    option:unwrap $ first ys
+                    .unwrap $ first xs
+                    .unwrap $ first ys
                   recur
-                    conj acc $ [] :hit $ option:unwrap-or (first xs) |
+                    conj acc $ [] :hit $ .unwrap-or (first xs) |
                     rest xs
                     rest ys
                   if
-                    = "| " $ option:unwrap-or (first ys) |
+                    = "| " $ .unwrap-or (first ys) |
                     recur
-                      conj acc $ [] :space $ option:unwrap-or (first xs) |
+                      conj acc $ [] :space $ .unwrap-or (first xs) |
                       rest xs
                       rest ys
                     recur
-                      conj acc $ [] :rest $ option:unwrap-or (first xs) |
+                      conj acc $ [] :rest $ .unwrap-or (first xs) |
                       rest xs
                       , ys
           :examples $ []
@@ -254,11 +260,17 @@
             let
                 result $ parse-by-word-iter ([]) text $ filter (split query "| ")
                   fn (x)
+                    hint-fn $ {}
+                      :args $ [] 'String
+                      :return 'Bool
                     not $ blank? x
               {}
                 :matches? $ not $ any? result
                   fn (x)
-                    = :missed $ option:unwrap-or (first x) :missed
+                    hint-fn $ {}
+                      :args $ [] $ :: 'List 'Dynamic
+                      :return 'Bool
+                    = :missed $ .unwrap-or (first x) :missed
                 :chunks result
                 :text text
           :examples $ []
@@ -276,7 +288,7 @@
             if (empty? ys)
               if (blank? text) acc $ conj acc $ [] :rest text
               let
-                  y0 $ option:unwrap-or (first ys) |
+                  y0 $ .unwrap-or (first ys) |
                   p $ .unwrap-or (str-find-index text y0) -1
                 cond
                     > p 0
@@ -284,12 +296,12 @@
                       conj acc
                         [] :rest $ slice text 0 p
                         [] :hit y0
-                      slice text $ + p $ count y0
+                      slice text $ + p $ .len y0
                       rest ys
                   (= p 0)
                     recur
                       conj acc $ [] :hit y0
-                      slice text $ count y0
+                      slice text $ .len y0
                       rest ys
                   true $ conj acc $ [] :missed y0
           :examples $ []
@@ -328,8 +340,6 @@
             render-app!
             add-watch! *reel :changes $ fn (r p) (render-app!)
             listen-devtools! |a dispatch!
-            js-ffi.browser/add-event-listener! |beforeunload $ fn (event) (persist-storage!)
-            js-ffi.browser/set-interval! persist-storage! $ * 1000 60
             match
               js-ffi.browser/storage-get $ decode-map-as
                 match (calcit.core/get config/site :storage)
@@ -339,6 +349,8 @@
               (:none) &unit
               (:some raw)
                 dispatch! $ :: :hydrate-storage $ parse-cirru-edn raw
+            js-ffi.browser/add-event-listener! |beforeunload $ fn (event) (persist-storage!)
+            js-ffi.browser/set-interval! persist-storage! $ * 1000 60
             println "|App started."
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
