@@ -9,10 +9,13 @@ Demo http://r.tiye.me/mvc-works/fuzzy-filter/
 ### 0.0.17 候选：正式 Calcit 0.30.1
 
 使用者影响：CLI 与 `@calcit/procs` 一起升级到正式 **0.30.1**，同步依赖图为
-Reel0.6.41、UI0.8.0、Respo0.16.124、JS-FFI0.2.5。请重新安装模块、生成JS并刷新，
+Reel0.6.42、UI0.8.1、Respo0.16.126、JS-FFI0.2.6。请重新安装模块、生成JS并刷新，
 不要混装旧alpha缓存；候选tag未发布前不要用main/hash代替。
-相对0.0.16不改Snapshot、公开匹配算法/Map返回格式、Unicode语义或Demo存档格式/key。
-本轮以all-defs替代手写namespace清单，保留完整strict、原3项native及7项Node测试、
+本轮迁移18处旧Option、3处Map合并和2处字符串长度调用，并为四个集合回调补充真实类型。
+公开匹配算法/Map返回格式、Unicode语义和Demo存档格式/key不变，HUD错误展示保留。
+修正存档恢复顺序：解析/解码成功后才注册原退出保存和一分钟定时保存，避免坏存档启动
+失败后被默认Store覆盖；不吞错、不清空或为非法存档补默认值，参见[#39](https://github.com/mvc-works/fuzzy-filter/issues/39)。
+继续保留all-defs、完整strict、原3项native及7项Node测试、
 README示例门禁、COS action内置verify和原前端部署路径。不新增验证脚本、预算或兼容强转。
 正式图的CI和实际Demo验收以对应PR结果为准，库绿色不代表所有消费者已完成迁移。
 
@@ -53,7 +56,7 @@ calcit calcit.cirru js
 node --test scripts/fuzzy-filter.test.mjs
 ```
 
-直接与传递依赖收敛为 JS-FFI 0.2.5、Respo 0.16.124、UI 0.8.0、Reel 0.6.41。
+直接与传递依赖收敛为 JS-FFI 0.2.6、Respo 0.16.126、UI 0.8.1、Reel 0.6.42。
 本轮不执行本地 Caps；本地复用模块不替代独立 CI 的 strict 安装。
 浏览器入口显式声明 `mode: js` / `target: browser`，all-defs覆盖全部定义，包含业务和元数据命名空间。
 以下为历史0.0.16（CLI/procs alpha.5）的迁移与验收记录，不作为0.0.17的新验收结果：
