@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - prepare/fuzzy-filter-source031
   pull_request: {}
 
 permissions:
@@ -48,9 +49,10 @@ jobs:
         caps --strict --ci
         yarn install --immutable
         caps verify --toolchain
+        node prepare-source.mjs
         calcit calcit.cirru edit format
-        git diff --exit-code -- calcit.cirru
-        calcit calcit.cirru fix --workflow strict --verify --format edn
+        test "$(git hash-object calcit.cirru)" = "$(cat acceptance/snapshot-blob.txt)"
+        calcit calcit.cirru fix --workflow strict --verify --format json | jq -e 'if .data.workflow.status? == "passed" and .diagnostics? == [] then true else ., false end'
         calcit calcit.cirru --check-only --all-defs
         calcit calcit.cirru test --require-match --summary-only --format json
         calcit calcit.cirru analyze weak-types --only deprecated-call --summary-only --format json | jq -e '.data.summary.calls == 0'
@@ -65,8 +67,10 @@ jobs:
         set -euo pipefail
         if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
           asset_prefix="${GITHUB_REPOSITORY}/pr/${PR_NUMBER}/${GITHUB_RUN_ID}/${GITHUB_RUN_ATTEMPT}/"
-        else
+        elif [[ "$GITHUB_REF" == 'refs/heads/main' ]]; then
           asset_prefix="${GITHUB_REPOSITORY}/"
+        else
+          asset_prefix="${GITHUB_REPOSITORY}/branches/${GITHUB_REF_NAME}/${GITHUB_RUN_ID}/${GITHUB_RUN_ATTEMPT}/"
         fi
         export VITE_BASE_URL="${CDN_ORIGIN}/${asset_prefix}"
         echo "VITE_BASE_URL=${VITE_BASE_URL}" >> "$GITHUB_ENV"
@@ -76,7 +80,7 @@ jobs:
         node --test scripts/fuzzy-filter.test.mjs
 
     - name: Upload static assets to COS
-      if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+      if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
       uses: worktools/cos-upload-action@v1.2.0
       with:
         source-dir: dist
@@ -103,3 +107,14 @@ jobs:
     - name: Display deploy status
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: echo "${{ steps.deploy.outputs.status }}"
+
+    - name: Preserve official source and original client
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      with:
+        name: fuzzy-filter-source-prepared
+        path: |
+          calcit.cirru
+          acceptance
+          js-out
+          dist
+        retention-days: 3

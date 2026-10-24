@@ -1,0 +1,2917 @@
+[
+  {
+    "code": [
+      "def",
+      "calcit-dirname",
+      "|"
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.$meta/calcit-dirname",
+    "js_ffi": null,
+    "schema": null,
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "def",
+      "calcit-filename",
+      "|calcit.cirru"
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.$meta/calcit-filename",
+    "js_ffi": null,
+    "schema": null,
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defcomp",
+      "comp-container",
+      [
+        "reel"
+      ],
+      [
+        "let",
+        [
+          [
+            "store",
+            [
+              ":store",
+              "reel"
+            ]
+          ],
+          [
+            "states",
+            [
+              ":states",
+              "store"
+            ]
+          ],
+          [
+            "content",
+            [
+              ":content",
+              "store"
+            ]
+          ],
+          [
+            "query",
+            [
+              ":query",
+              "store"
+            ]
+          ]
+        ],
+        [
+          "div",
+          [
+            "{}",
+            [
+              ":style",
+              [
+                "merge",
+                "ui/global",
+                "ui/column",
+                [
+                  "{}",
+                  [
+                    ":padding",
+                    "|16"
+                  ]
+                ]
+              ]
+            ]
+          ],
+          [
+            "div",
+            [
+              "{}"
+            ],
+            [
+              "div",
+              [
+                "{}"
+              ],
+              [
+                "input",
+                [
+                  "{}",
+                  [
+                    ":style",
+                    "ui/input"
+                  ],
+                  [
+                    ":value",
+                    "content"
+                  ],
+                  [
+                    ":placeholder",
+                    "|text"
+                  ],
+                  [
+                    ":on-input",
+                    [
+                      "fn",
+                      [
+                        "e",
+                        "d!"
+                      ],
+                      [
+                        "hint-fn",
+                        [
+                          "{}",
+                          [
+                            ":args",
+                            [
+                              "[]",
+                              [
+                                "::",
+                                "'Map",
+                                "'Tag",
+                                "'Dynamic"
+                              ],
+                              [
+                                "::",
+                                "'Fn",
+                                [
+                                  "{}",
+                                  [
+                                    ":args",
+                                    [
+                                      "[]",
+                                      "'Dynamic"
+                                    ]
+                                  ],
+                                  [
+                                    ":return",
+                                    "'Unit"
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ],
+                          [
+                            ":return",
+                            "'Unit"
+                          ]
+                        ]
+                      ],
+                      [
+                        "d!",
+                        [
+                          "::",
+                          ":content",
+                          [
+                            "decode-map-as",
+                            [
+                              ".unwrap",
+                              [
+                                "get",
+                                "e",
+                                ":value"
+                              ]
+                            ],
+                            "'String"
+                          ]
+                        ]
+                      ],
+                      "&unit"
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "=<",
+              "nil",
+              "8"
+            ],
+            [
+              "div",
+              [
+                "{}"
+              ],
+              [
+                "input",
+                [
+                  "{}",
+                  [
+                    ":style",
+                    "ui/input"
+                  ],
+                  [
+                    ":value",
+                    "query"
+                  ],
+                  [
+                    ":placeholder",
+                    "|query"
+                  ],
+                  [
+                    ":on-input",
+                    [
+                      "fn",
+                      [
+                        "e",
+                        "d!"
+                      ],
+                      [
+                        "hint-fn",
+                        [
+                          "{}",
+                          [
+                            ":args",
+                            [
+                              "[]",
+                              [
+                                "::",
+                                "'Map",
+                                "'Tag",
+                                "'Dynamic"
+                              ],
+                              [
+                                "::",
+                                "'Fn",
+                                [
+                                  "{}",
+                                  [
+                                    ":args",
+                                    [
+                                      "[]",
+                                      "'Dynamic"
+                                    ]
+                                  ],
+                                  [
+                                    ":return",
+                                    "'Unit"
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ],
+                          [
+                            ":return",
+                            "'Unit"
+                          ]
+                        ]
+                      ],
+                      [
+                        "d!",
+                        [
+                          "::",
+                          ":query",
+                          [
+                            "decode-map-as",
+                            [
+                              ".unwrap",
+                              [
+                                "get",
+                                "e",
+                                ":value"
+                              ]
+                            ],
+                            "'String"
+                          ]
+                        ]
+                      ],
+                      "&unit"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ],
+          [
+            "let",
+            [
+              [
+                "result",
+                [
+                  "parse-by-letter",
+                  "content",
+                  "query"
+                ]
+              ],
+              [
+                "word-result",
+                [
+                  "parse-by-word",
+                  "content",
+                  "query"
+                ]
+              ]
+            ],
+            [
+              "div",
+              [
+                "{}"
+              ],
+              [
+                "pre",
+                [
+                  "{}",
+                  [
+                    ":style",
+                    [
+                      "{}",
+                      [
+                        ":font-family",
+                        "ui/font-code"
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "code",
+                  [
+                    "{}"
+                  ],
+                  [
+                    "<>",
+                    [
+                      "trim",
+                      [
+                        "format-cirru-edn",
+                        "result"
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              [
+                "pre",
+                [
+                  "{}",
+                  [
+                    ":style",
+                    [
+                      "{}",
+                      [
+                        ":font-family",
+                        "ui/font-code"
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "code",
+                  [
+                    "{}"
+                  ],
+                  [
+                    "<>",
+                    [
+                      "trim",
+                      [
+                        "format-cirru-edn",
+                        "word-result"
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              [
+                "when",
+                [
+                  "match",
+                  [
+                    "calcit.core/get",
+                    "result",
+                    ":matches?"
+                  ],
+                  [
+                    [
+                      ":some",
+                      "value"
+                    ],
+                    "value"
+                  ],
+                  [
+                    [
+                      ":none"
+                    ],
+                    "nil"
+                  ]
+                ],
+                [
+                  "div",
+                  [
+                    "{}"
+                  ],
+                  [
+                    "comp-visual",
+                    [
+                      "decode-map-as",
+                      [
+                        "match",
+                        [
+                          "calcit.core/get",
+                          "result",
+                          ":chunks"
+                        ],
+                        [
+                          [
+                            ":some",
+                            "value"
+                          ],
+                          "value"
+                        ],
+                        [
+                          [
+                            ":none"
+                          ],
+                          "nil"
+                        ]
+                      ],
+                      [
+                        "::",
+                        "'List",
+                        [
+                          "::",
+                          "'List",
+                          "'Dynamic"
+                        ]
+                      ]
+                    ],
+                    [
+                      "{}",
+                      [
+                        ":color",
+                        [
+                          "hsl",
+                          "0",
+                          "0",
+                          "70"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              [
+                "when",
+                [
+                  "match",
+                  [
+                    "calcit.core/get",
+                    "word-result",
+                    ":matches?"
+                  ],
+                  [
+                    [
+                      ":some",
+                      "value"
+                    ],
+                    "value"
+                  ],
+                  [
+                    [
+                      ":none"
+                    ],
+                    "nil"
+                  ]
+                ],
+                [
+                  "div",
+                  [
+                    "{}"
+                  ],
+                  [
+                    "comp-visual",
+                    [
+                      "decode-map-as",
+                      [
+                        "match",
+                        [
+                          "calcit.core/get",
+                          "word-result",
+                          ":chunks"
+                        ],
+                        [
+                          [
+                            ":some",
+                            "value"
+                          ],
+                          "value"
+                        ],
+                        [
+                          [
+                            ":none"
+                          ],
+                          "nil"
+                        ]
+                      ],
+                      [
+                        "::",
+                        "'List",
+                        [
+                          "::",
+                          "'List",
+                          "'Dynamic"
+                        ]
+                      ]
+                    ],
+                    [
+                      "{}",
+                      [
+                        ":color",
+                        [
+                          "hsl",
+                          "0",
+                          "0",
+                          "70"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ],
+          [
+            "when",
+            "dev?",
+            [
+              "comp-typed-reel",
+              [
+                ">>",
+                "states",
+                ":reel"
+              ],
+              "reel",
+              [
+                "{}"
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.comp.container/comp-container",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'respo.schema/Component"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          [
+            "::",
+            "'reel.typed/State",
+            "'fuzzy-filter.schema/Op",
+            "'fuzzy-filter.schema/Store"
+          ]
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defcomp",
+      "comp-visual",
+      [
+        "pieces",
+        "style-rest"
+      ],
+      [
+        "let",
+        [
+          [
+            "style-base",
+            [
+              "{}"
+            ]
+          ],
+          [
+            "style-hit",
+            [
+              "{}"
+            ]
+          ]
+        ],
+        [
+          "list->",
+          [
+            "{}",
+            [
+              ":style",
+              [
+                "{}",
+                [
+                  ":display",
+                  ":inline-block"
+                ]
+              ]
+            ]
+          ],
+          [
+            "->",
+            "pieces",
+            [
+              "map-indexed",
+              [
+                "fn",
+                [
+                  "idx",
+                  "chunk"
+                ],
+                [
+                  "[]",
+                  "idx",
+                  [
+                    "span",
+                    [
+                      "{}",
+                      [
+                        ":inner-text",
+                        [
+                          "option:unwrap-or",
+                          [
+                            "last",
+                            "chunk"
+                          ],
+                          "|"
+                        ]
+                      ],
+                      [
+                        ":style",
+                        [
+                          "merge",
+                          "style-base",
+                          [
+                            "if",
+                            [
+                              "=",
+                              ":hit",
+                              [
+                                "option:unwrap-or",
+                                [
+                                  "first",
+                                  "chunk"
+                                ],
+                                ":missed"
+                              ]
+                            ],
+                            [
+                              "merge",
+                              [
+                                "{}",
+                                [
+                                  ":font-weight",
+                                  ":bold"
+                                ]
+                              ],
+                              "style-hit"
+                            ],
+                            "style-rest"
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.comp.visual/comp-visual",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'respo.schema/Component"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          [
+            "::",
+            "'List",
+            [
+              "::",
+              "'List",
+              "'Dynamic"
+            ]
+          ],
+          [
+            "::",
+            "'Map",
+            "'Tag",
+            "'Dynamic"
+          ]
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "def",
+      "bundle-builds",
+      [
+        "#{}",
+        "|release",
+        "|local-bundle"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.config/bundle-builds",
+    "js_ffi": null,
+    "schema": [
+      "::",
+      "'Set",
+      "'String"
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "def",
+      "dev?",
+      [
+        "=",
+        "|dev",
+        [
+          "option:unwrap-or",
+          [
+            "get-env",
+            "|mode"
+          ],
+          "|release"
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.config/dev?",
+    "js_ffi": null,
+    "schema": "'Bool",
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "def",
+      "site",
+      [
+        "{}",
+        [
+          ":storage",
+          "|fuzzy-filter"
+        ],
+        [
+          ":dev-ui",
+          "|http://localhost:8100/main.css"
+        ],
+        [
+          ":release-ui",
+          "|http://cdn.tiye.me/favored-fonts/main.css"
+        ],
+        [
+          ":cdn-url",
+          "|http://cdn.tiye.me/fuzzy-filter/"
+        ],
+        [
+          ":cdn-folder",
+          "|tiye.me:cdn/fuzzy-filter"
+        ],
+        [
+          ":title",
+          "|Fuzzy Filter"
+        ],
+        [
+          ":icon",
+          "|http://cdn.tiye.me/logo/mvc-works.png"
+        ],
+        [
+          ":upload-folder",
+          "|tiye.me:repo/mvc-works/fuzzy-filter/"
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.config/site",
+    "js_ffi": null,
+    "schema": [
+      "::",
+      "'Map",
+      "'Tag",
+      "'String"
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "conflate-chunks",
+      [
+        "xs"
+      ],
+      [
+        "conflate-chunks-iter",
+        [
+          "[]"
+        ],
+        [
+          "[]"
+        ],
+        "xs"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.core/conflate-chunks",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          [
+            "::",
+            "'List",
+            [
+              "::",
+              "'List",
+              "'Dynamic"
+            ]
+          ]
+        ]
+      ],
+      [
+        ":return",
+        [
+          "::",
+          "'List",
+          [
+            "::",
+            "'List",
+            "'Dynamic"
+          ]
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "conflate-chunks-iter",
+      [
+        "acc",
+        "buffer",
+        "xs"
+      ],
+      [
+        "if",
+        [
+          "empty?",
+          "xs"
+        ],
+        [
+          "if",
+          [
+            "empty?",
+            "buffer"
+          ],
+          "acc",
+          [
+            "conj",
+            "acc",
+            "buffer"
+          ]
+        ],
+        [
+          "let",
+          [
+            [
+              "x0",
+              [
+                "option:unwrap",
+                [
+                  "first",
+                  "xs"
+                ]
+              ]
+            ]
+          ],
+          [
+            "if",
+            [
+              "empty?",
+              "buffer"
+            ],
+            [
+              "recur",
+              "acc",
+              "x0",
+              [
+                "rest",
+                "xs"
+              ]
+            ],
+            [
+              "if",
+              [
+                "=",
+                [
+                  "decode-map-as",
+                  [
+                    "option:unwrap-or",
+                    [
+                      "first",
+                      "buffer"
+                    ],
+                    ":unknown"
+                  ],
+                  "'Tag"
+                ],
+                [
+                  "decode-map-as",
+                  [
+                    "option:unwrap-or",
+                    [
+                      "first",
+                      "x0"
+                    ],
+                    ":unknown"
+                  ],
+                  "'Tag"
+                ]
+              ],
+              [
+                "recur",
+                "acc",
+                [
+                  "[]",
+                  [
+                    "option:unwrap-or",
+                    [
+                      "first",
+                      "buffer"
+                    ],
+                    "nil"
+                  ],
+                  [
+                    "str",
+                    [
+                      "option:unwrap-or",
+                      [
+                        "last",
+                        "buffer"
+                      ],
+                      "|"
+                    ],
+                    [
+                      "option:unwrap-or",
+                      [
+                        "last",
+                        "x0"
+                      ],
+                      "|"
+                    ]
+                  ]
+                ],
+                [
+                  "rest",
+                  "xs"
+                ]
+              ],
+              [
+                "recur",
+                [
+                  "conj",
+                  "acc",
+                  "buffer"
+                ],
+                "x0",
+                [
+                  "rest",
+                  "xs"
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.core/conflate-chunks-iter",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          [
+            "::",
+            "'List",
+            [
+              "::",
+              "'List",
+              "'Dynamic"
+            ]
+          ],
+          [
+            "::",
+            "'List",
+            "'Dynamic"
+          ],
+          [
+            "::",
+            "'List",
+            [
+              "::",
+              "'List",
+              "'Dynamic"
+            ]
+          ]
+        ]
+      ],
+      [
+        ":return",
+        [
+          "::",
+          "'List",
+          [
+            "::",
+            "'List",
+            "'Dynamic"
+          ]
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "parse-by-letter",
+      [
+        "text",
+        "query"
+      ],
+      [
+        "let",
+        [
+          [
+            "results",
+            [
+              "conflate-chunks",
+              [
+                "parse-by-letter-iter",
+                [
+                  "[]"
+                ],
+                [
+                  "split",
+                  [
+                    "assert-type",
+                    "text",
+                    "'String"
+                  ],
+                  "|"
+                ],
+                [
+                  "split",
+                  [
+                    "assert-type",
+                    "query",
+                    "'String"
+                  ],
+                  "|"
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "{}",
+          [
+            ":matches?",
+            [
+              "not",
+              [
+                "any?",
+                "results",
+                [
+                  "fn",
+                  [
+                    "x"
+                  ],
+                  [
+                    "=",
+                    ":missed",
+                    [
+                      "option:unwrap-or",
+                      [
+                        "first",
+                        "x"
+                      ],
+                      ":missed"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ],
+          [
+            ":chunks",
+            "results"
+          ],
+          [
+            ":text",
+            "text"
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.core/parse-by-letter",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'String",
+          "'String"
+        ]
+      ],
+      [
+        ":return",
+        [
+          "::",
+          "'Map",
+          "'Tag",
+          "'Dynamic"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": [
+      {
+        "code": [
+          "assert=",
+          "true",
+          [
+            "match",
+            [
+              "calcit.core/get",
+              [
+                "parse-by-letter",
+                "|abc",
+                "|ac"
+              ],
+              ":matches?"
+            ],
+            [
+              [
+                ":some",
+                "value"
+              ],
+              "value"
+            ],
+            [
+              [
+                ":none"
+              ],
+              "nil"
+            ]
+          ]
+        ],
+        "name": "matched-subsequence",
+        "tags": [
+          "unit"
+        ]
+      },
+      {
+        "code": [
+          "assert=",
+          "false",
+          [
+            "match",
+            [
+              "calcit.core/get",
+              [
+                "parse-by-letter",
+                "|abc",
+                "|abcd"
+              ],
+              ":matches?"
+            ],
+            [
+              [
+                ":some",
+                "value"
+              ],
+              "value"
+            ],
+            [
+              [
+                ":none"
+              ],
+              "nil"
+            ]
+          ]
+        ],
+        "name": "unmatched-query-suffix",
+        "tags": [
+          "unit"
+        ]
+      }
+    ]
+  },
+  {
+    "code": [
+      "defn",
+      "parse-by-letter-iter",
+      [
+        "acc",
+        "xs",
+        "ys"
+      ],
+      [
+        "if",
+        [
+          "empty?",
+          "xs"
+        ],
+        [
+          "if",
+          [
+            "empty?",
+            "ys"
+          ],
+          "acc",
+          [
+            "conj",
+            "acc",
+            [
+              "[]",
+              ":missed",
+              [
+                "apply",
+                "str",
+                "ys"
+              ]
+            ]
+          ]
+        ],
+        [
+          "if",
+          [
+            "empty?",
+            "ys"
+          ],
+          [
+            "conj",
+            "acc",
+            [
+              "[]",
+              ":rest",
+              [
+                "apply",
+                "str",
+                "xs"
+              ]
+            ]
+          ],
+          [
+            "if",
+            [
+              "=",
+              [
+                "option:unwrap",
+                [
+                  "first",
+                  "xs"
+                ]
+              ],
+              [
+                "option:unwrap",
+                [
+                  "first",
+                  "ys"
+                ]
+              ]
+            ],
+            [
+              "recur",
+              [
+                "conj",
+                "acc",
+                [
+                  "[]",
+                  ":hit",
+                  [
+                    "option:unwrap-or",
+                    [
+                      "first",
+                      "xs"
+                    ],
+                    "|"
+                  ]
+                ]
+              ],
+              [
+                "rest",
+                "xs"
+              ],
+              [
+                "rest",
+                "ys"
+              ]
+            ],
+            [
+              "if",
+              [
+                "=",
+                "| ",
+                [
+                  "option:unwrap-or",
+                  [
+                    "first",
+                    "ys"
+                  ],
+                  "|"
+                ]
+              ],
+              [
+                "recur",
+                [
+                  "conj",
+                  "acc",
+                  [
+                    "[]",
+                    ":space",
+                    [
+                      "option:unwrap-or",
+                      [
+                        "first",
+                        "xs"
+                      ],
+                      "|"
+                    ]
+                  ]
+                ],
+                [
+                  "rest",
+                  "xs"
+                ],
+                [
+                  "rest",
+                  "ys"
+                ]
+              ],
+              [
+                "recur",
+                [
+                  "conj",
+                  "acc",
+                  [
+                    "[]",
+                    ":rest",
+                    [
+                      "option:unwrap-or",
+                      [
+                        "first",
+                        "xs"
+                      ],
+                      "|"
+                    ]
+                  ]
+                ],
+                [
+                  "rest",
+                  "xs"
+                ],
+                "ys"
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.core/parse-by-letter-iter",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          [
+            "::",
+            "'List",
+            [
+              "::",
+              "'List",
+              "'Dynamic"
+            ]
+          ],
+          [
+            "::",
+            "'List",
+            "'String"
+          ],
+          [
+            "::",
+            "'List",
+            "'String"
+          ]
+        ]
+      ],
+      [
+        ":return",
+        [
+          "::",
+          "'List",
+          [
+            "::",
+            "'List",
+            "'Dynamic"
+          ]
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "parse-by-word",
+      [
+        "text",
+        "query"
+      ],
+      [
+        "let",
+        [
+          [
+            "result",
+            [
+              "parse-by-word-iter",
+              [
+                "[]"
+              ],
+              "text",
+              [
+                "filter",
+                [
+                  "split",
+                  "query",
+                  "| "
+                ],
+                [
+                  "fn",
+                  [
+                    "x"
+                  ],
+                  [
+                    "not",
+                    [
+                      "blank?",
+                      "x"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "{}",
+          [
+            ":matches?",
+            [
+              "not",
+              [
+                "any?",
+                "result",
+                [
+                  "fn",
+                  [
+                    "x"
+                  ],
+                  [
+                    "=",
+                    ":missed",
+                    [
+                      "option:unwrap-or",
+                      [
+                        "first",
+                        "x"
+                      ],
+                      ":missed"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ],
+          [
+            ":chunks",
+            "result"
+          ],
+          [
+            ":text",
+            "text"
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.core/parse-by-word",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'String",
+          "'String"
+        ]
+      ],
+      [
+        ":return",
+        [
+          "::",
+          "'Map",
+          "'Tag",
+          "'Dynamic"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": [
+      {
+        "code": [
+          "assert=",
+          [
+            "{}",
+            [
+              ":matches?",
+              "true"
+            ],
+            [
+              ":text",
+              "|😀ab😀"
+            ],
+            [
+              ":chunks",
+              [
+                "[]",
+                [
+                  "[]",
+                  ":rest",
+                  "|😀a"
+                ],
+                [
+                  "[]",
+                  ":hit",
+                  "|b"
+                ],
+                [
+                  "[]",
+                  ":rest",
+                  "|😀"
+                ]
+              ]
+            ]
+          ],
+          [
+            "parse-by-word",
+            "|😀ab😀",
+            "|b"
+          ]
+        ],
+        "name": "emoji-before-word",
+        "tags": [
+          "unit"
+        ]
+      }
+    ]
+  },
+  {
+    "code": [
+      "defn",
+      "parse-by-word-iter",
+      [
+        "acc",
+        "text",
+        "ys"
+      ],
+      [
+        "if",
+        [
+          "empty?",
+          "ys"
+        ],
+        [
+          "if",
+          [
+            "blank?",
+            "text"
+          ],
+          "acc",
+          [
+            "conj",
+            "acc",
+            [
+              "[]",
+              ":rest",
+              "text"
+            ]
+          ]
+        ],
+        [
+          "let",
+          [
+            [
+              "y0",
+              [
+                "option:unwrap-or",
+                [
+                  "first",
+                  "ys"
+                ],
+                "|"
+              ]
+            ],
+            [
+              "p",
+              [
+                ".unwrap-or",
+                [
+                  "str-find-index",
+                  "text",
+                  "y0"
+                ],
+                "-1"
+              ]
+            ]
+          ],
+          [
+            "cond",
+            [
+              [
+                ">",
+                "p",
+                "0"
+              ],
+              [
+                "recur",
+                [
+                  "conj",
+                  "acc",
+                  [
+                    "[]",
+                    ":rest",
+                    [
+                      "slice",
+                      "text",
+                      "0",
+                      "p"
+                    ]
+                  ],
+                  [
+                    "[]",
+                    ":hit",
+                    "y0"
+                  ]
+                ],
+                [
+                  "slice",
+                  "text",
+                  [
+                    "+",
+                    "p",
+                    [
+                      "count",
+                      "y0"
+                    ]
+                  ]
+                ],
+                [
+                  "rest",
+                  "ys"
+                ]
+              ]
+            ],
+            [
+              [
+                "=",
+                "p",
+                "0"
+              ],
+              [
+                "recur",
+                [
+                  "conj",
+                  "acc",
+                  [
+                    "[]",
+                    ":hit",
+                    "y0"
+                  ]
+                ],
+                [
+                  "slice",
+                  "text",
+                  [
+                    "count",
+                    "y0"
+                  ]
+                ],
+                [
+                  "rest",
+                  "ys"
+                ]
+              ]
+            ],
+            [
+              "true",
+              [
+                "conj",
+                "acc",
+                [
+                  "[]",
+                  ":missed",
+                  "y0"
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.core/parse-by-word-iter",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          [
+            "::",
+            "'List",
+            [
+              "::",
+              "'List",
+              "'Dynamic"
+            ]
+          ],
+          "'String",
+          [
+            "::",
+            "'List",
+            "'String"
+          ]
+        ]
+      ],
+      [
+        ":return",
+        [
+          "::",
+          "'List",
+          [
+            "::",
+            "'List",
+            "'Dynamic"
+          ]
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defref",
+      "*reel",
+      [
+        "schema/new-reel",
+        "schema/store"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.main/*reel",
+    "js_ffi": null,
+    "schema": [
+      "::",
+      "'Ref",
+      [
+        "::",
+        "'reel.typed/State",
+        "'fuzzy-filter.schema/Op",
+        "'fuzzy-filter.schema/Store"
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "dispatch!",
+      [
+        "op"
+      ],
+      [
+        "if",
+        [
+          "enum?",
+          "op"
+        ],
+        [
+          "match",
+          [
+            "typed/decode-control",
+            "op"
+          ],
+          [
+            [
+              ":some",
+              "control"
+            ],
+            [
+              "reset!",
+              "*reel",
+              [
+                "typed/apply-control",
+                "updater",
+                "@*reel",
+                "control"
+              ]
+            ]
+          ],
+          [
+            [
+              ":none"
+            ],
+            [
+              "reset!",
+              "*reel",
+              [
+                "typed/record-op",
+                "updater",
+                "@*reel",
+                [
+                  "schema/decode-op",
+                  "op"
+                ],
+                [
+                  "generate-id!"
+                ],
+                [
+                  "unix-time-ms"
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "raise",
+          "|Expected-Fuzzy-Filter-operation"
+        ]
+      ],
+      "&unit"
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.main/dispatch!",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'Unit"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'Dynamic"
+        ]
+      ],
+      [
+        ":features",
+        [
+          "#{}",
+          ":js-ffi"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "main!",
+      [],
+      [
+        "println",
+        "|Running mode:",
+        [
+          "if",
+          "config/dev?",
+          "|dev",
+          "|release"
+        ]
+      ],
+      [
+        "if",
+        "config/dev?",
+        [
+          "load-console-formatter!"
+        ]
+      ],
+      [
+        "render-app!"
+      ],
+      [
+        "add-watch!",
+        "*reel",
+        ":changes",
+        [
+          "fn",
+          [
+            "r",
+            "p"
+          ],
+          [
+            "render-app!"
+          ]
+        ]
+      ],
+      [
+        "listen-devtools!",
+        "|a",
+        "dispatch!"
+      ],
+      [
+        "js-ffi.browser/add-event-listener!",
+        "|beforeunload",
+        [
+          "fn",
+          [
+            "event"
+          ],
+          [
+            "persist-storage!"
+          ]
+        ]
+      ],
+      [
+        "js-ffi.browser/set-interval!",
+        "persist-storage!",
+        [
+          "*",
+          "1000",
+          "60"
+        ]
+      ],
+      [
+        "match",
+        [
+          "js-ffi.browser/storage-get",
+          [
+            "decode-map-as",
+            [
+              "match",
+              [
+                "calcit.core/get",
+                "config/site",
+                ":storage"
+              ],
+              [
+                [
+                  ":some",
+                  "value"
+                ],
+                "value"
+              ],
+              [
+                [
+                  ":none"
+                ],
+                "nil"
+              ]
+            ],
+            "'String"
+          ]
+        ],
+        [
+          [
+            ":none"
+          ],
+          "&unit"
+        ],
+        [
+          [
+            ":some",
+            "raw"
+          ],
+          [
+            "dispatch!",
+            [
+              "::",
+              ":hydrate-storage",
+              [
+                "parse-cirru-edn",
+                "raw"
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "println",
+        "|App started."
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.main/main!",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'Unit"
+      ],
+      [
+        ":args",
+        [
+          "[]"
+        ]
+      ],
+      [
+        ":features",
+        [
+          "#{}",
+          ":js-ffi"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "mount-target",
+      [],
+      [
+        "match",
+        [
+          "js-ffi.browser/query-selector",
+          "|.app"
+        ],
+        [
+          [
+            ":none"
+          ],
+          [
+            "raise",
+            "|Missing .app mount target"
+          ]
+        ],
+        [
+          [
+            ":some",
+            "host"
+          ],
+          [
+            "respo.ffi.browser/narrow-element",
+            "host"
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.main/mount-target",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'respo.dom/DomElement"
+      ],
+      [
+        ":args",
+        [
+          "[]"
+        ]
+      ],
+      [
+        ":features",
+        [
+          "#{}",
+          ":js-ffi"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "persist-storage!",
+      [],
+      [
+        "js-ffi.browser/storage-set!",
+        [
+          "decode-map-as",
+          [
+            "match",
+            [
+              "calcit.core/get",
+              "config/site",
+              ":storage"
+            ],
+            [
+              [
+                ":some",
+                "value"
+              ],
+              "value"
+            ],
+            [
+              [
+                ":none"
+              ],
+              "nil"
+            ]
+          ],
+          "'String"
+        ],
+        [
+          "format-cirru-edn",
+          [
+            "&struct:to-map",
+            [
+              ":store",
+              "@*reel"
+            ]
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.main/persist-storage!",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'Unit"
+      ],
+      [
+        ":args",
+        [
+          "[]"
+        ]
+      ],
+      [
+        ":features",
+        [
+          "#{}",
+          ":js-ffi"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "reload!",
+      [],
+      [
+        "if",
+        [
+          "js-nullish?",
+          "build-errors"
+        ],
+        [
+          "do",
+          [
+            "remove-watch!",
+            "*reel",
+            ":changes"
+          ],
+          [
+            "clear-cache!"
+          ],
+          [
+            "add-watch!",
+            "*reel",
+            ":changes",
+            [
+              "fn",
+              [
+                "reel",
+                "prev"
+              ],
+              [
+                "render-app!"
+              ]
+            ]
+          ],
+          [
+            "reset!",
+            "*reel",
+            [
+              "typed/refresh",
+              "updater",
+              "@*reel",
+              "schema/store"
+            ]
+          ],
+          [
+            "hud!",
+            "|ok~",
+            "|Ok"
+          ]
+        ],
+        [
+          "hud!",
+          "|error",
+          "build-errors"
+        ]
+      ],
+      "&unit"
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.main/reload!",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'Unit"
+      ],
+      [
+        ":args",
+        [
+          "[]"
+        ]
+      ],
+      [
+        ":features",
+        [
+          "#{}",
+          ":js-ffi"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "render-app!",
+      [],
+      [
+        "render!",
+        [
+          "mount-target"
+        ],
+        [
+          "comp-container",
+          "@*reel"
+        ],
+        "dispatch!"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.main/render-app!",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'Unit"
+      ],
+      [
+        ":args",
+        [
+          "[]"
+        ]
+      ],
+      [
+        ":features",
+        [
+          "#{}",
+          ":js-ffi"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defenum",
+      "Op",
+      [
+        ":states",
+        [
+          "::",
+          "'List",
+          "'Dynamic"
+        ],
+        "'Dynamic"
+      ],
+      [
+        ":content",
+        "'String"
+      ],
+      [
+        ":query",
+        "'String"
+      ],
+      [
+        ":hydrate-storage",
+        "'fuzzy-filter.schema/Store"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.schema/Op",
+    "js_ffi": null,
+    "schema": "'EnumDef",
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defstruct",
+      "Store",
+      [
+        ":states",
+        [
+          "::",
+          "'Map",
+          "'Dynamic",
+          "'Dynamic"
+        ]
+      ],
+      [
+        ":content",
+        "'String"
+      ],
+      [
+        ":query",
+        "'String"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.schema/Store",
+    "js_ffi": null,
+    "schema": "'StructDef",
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "decode-op",
+      [
+        "op"
+      ],
+      [
+        "match",
+        "op",
+        [
+          [
+            ":states",
+            "cursor",
+            "data"
+          ],
+          [
+            "Op",
+            ":states",
+            [
+              "decode-map-as",
+              "cursor",
+              [
+                "::",
+                "'List",
+                "'Dynamic"
+              ]
+            ],
+            "data"
+          ]
+        ],
+        [
+          [
+            ":content",
+            "value"
+          ],
+          [
+            "Op",
+            ":content",
+            [
+              "decode-map-as",
+              "value",
+              "'String"
+            ]
+          ]
+        ],
+        [
+          [
+            ":query",
+            "value"
+          ],
+          [
+            "Op",
+            ":query",
+            [
+              "decode-map-as",
+              "value",
+              "'String"
+            ]
+          ]
+        ],
+        [
+          [
+            ":hydrate-storage",
+            "data"
+          ],
+          [
+            "Op",
+            ":hydrate-storage",
+            [
+              "normalize-store",
+              "data"
+            ]
+          ]
+        ],
+        [
+          "_",
+          [
+            "raise",
+            "|Unknown-Fuzzy-Filter-operation"
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.schema/decode-op",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'fuzzy-filter.schema/Op"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'Enum"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "def",
+      "empty-records",
+      [
+        "[]"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.schema/empty-records",
+    "js_ffi": null,
+    "schema": [
+      "::",
+      "'List",
+      [
+        "::",
+        "'reel.typed/Record",
+        "'fuzzy-filter.schema/Op"
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "new-reel",
+      [
+        "base"
+      ],
+      [
+        "typed/State",
+        ":base",
+        "base",
+        ":store",
+        "base",
+        ":records",
+        "empty-records",
+        ":pointer",
+        [
+          "Option",
+          ":none"
+        ],
+        ":stopped?",
+        "false",
+        ":display?",
+        "false",
+        ":merged?",
+        "false"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.schema/new-reel",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'fuzzy-filter.schema/Store"
+        ]
+      ],
+      [
+        ":return",
+        [
+          "::",
+          "'reel.typed/State",
+          "'fuzzy-filter.schema/Op",
+          "'fuzzy-filter.schema/Store"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "normalize-store",
+      [
+        "raw"
+      ],
+      [
+        "decode-map-as",
+        [
+          "if",
+          [
+            "struct?",
+            "raw"
+          ],
+          [
+            "&struct:to-map",
+            "raw"
+          ],
+          "raw"
+        ],
+        "'Store"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.schema/normalize-store",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'fuzzy-filter.schema/Store"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'Dynamic"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "def",
+      "store",
+      [
+        "Store",
+        ":states",
+        [
+          "{}"
+        ],
+        ":content",
+        "|this and that to search",
+        ":query",
+        "|that search"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.schema/store",
+    "js_ffi": null,
+    "schema": "'fuzzy-filter.schema/Store",
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "updater",
+      [
+        "store",
+        "op",
+        "op-id",
+        "op-time"
+      ],
+      [
+        "match",
+        "op",
+        [
+          [
+            ":states",
+            "cursor",
+            "data"
+          ],
+          [
+            "let",
+            [
+              [
+                "states",
+                [
+                  "update-state-tree",
+                  [
+                    ":states",
+                    "store"
+                  ],
+                  "cursor",
+                  "data"
+                ]
+              ]
+            ],
+            [
+              "if",
+              [
+                "map?",
+                "states"
+              ],
+              [
+                "assoc",
+                "store",
+                ":states",
+                "states"
+              ],
+              [
+                "raise",
+                "|Invalid-state-tree"
+              ]
+            ]
+          ]
+        ],
+        [
+          [
+            ":content",
+            "value"
+          ],
+          [
+            "assoc",
+            "store",
+            ":content",
+            "value"
+          ]
+        ],
+        [
+          [
+            ":query",
+            "value"
+          ],
+          [
+            "assoc",
+            "store",
+            ":query",
+            "value"
+          ]
+        ],
+        [
+          [
+            ":hydrate-storage",
+            "data"
+          ],
+          "data"
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "fuzzy-filter.updater/updater",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'fuzzy-filter.schema/Store"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'fuzzy-filter.schema/Store",
+          "'fuzzy-filter.schema/Op",
+          "'String",
+          "'Number"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  }
+]
