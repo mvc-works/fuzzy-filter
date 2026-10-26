@@ -89,6 +89,9 @@ PR 预览路径为 `mvc-works/fuzzy-filter/pr/<number>/<run-id>/<attempt>/`，
 每次运行和重试隔离，生产前缀不变。每个 PR 及生产使用独立队列，保留等待
 任务，不取消正在上传的任务。
 
+Dependabot 和 fork PR 仍运行完整类型检查、原测试和构建，但不使用普通 Actions secrets
+上传 COS；人工重跑也不扩大该权限。普通同仓库 PR 预览和 main 原前端部署规则保持不变。
+
 删除旧的本地 CDN 重复检查脚本，上传成功仅由 Action 内置公开校验确认。
 业务测试适配新版 ChildPair/RenderNode 和完整 Storage 接口，原输入及匹配断言保留。
 历史 0.28.0 的 `KeyboardEventHost` 阻塞不再作为本轮结论；以上游最新实际 strict 结果为准。
