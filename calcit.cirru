@@ -6,7 +6,7 @@
     {} (:description |) (:init-fn 'fuzzy-filter.main/main!) (:mode :js) (:reload-fn 'fuzzy-filter.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |reel.calcit/ |js-ffi/
-      :type-slots $ {}
+      :type-slots $ {} $ :dispatch-op |fuzzy-filter.schema/DispatchOp
   :files $ {}
     'fuzzy-filter.comp.container $ %{} 'FileEntry
       :defs $ {} $ 'comp-container
@@ -24,29 +24,19 @@
                   div ({})
                     input $ {} (:style ui/input) (:value content) (:placeholder |text)
                       :on-input $ fn (e d!)
-                        hint-fn $ {}
-                          :args $ [] (:: 'Map 'Tag 'Dynamic)
-                            :: 'Fn $ {}
-                              :args $ [] 'Dynamic
-                              :return 'Unit
-                          :return 'Unit
-                        d! $ :: :content $ decode-map-as
-                          .unwrap $ get e :value
-                          , 'String
+                        hint-fn $ Fn respo.schema/RespoEvent
+                          Fn AnyEnum $ -> Unit
+                          -> Unit
+                        d! $ :: :content $ decode-map-as (:value e) 'String
                         , &unit
-                  =< nil 8
+                  space-y 8
                   div ({})
                     input $ {} (:style ui/input) (:value query) (:placeholder |query)
                       :on-input $ fn (e d!)
-                        hint-fn $ {}
-                          :args $ [] (:: 'Map 'Tag 'Dynamic)
-                            :: 'Fn $ {}
-                              :args $ [] 'Dynamic
-                              :return 'Unit
-                          :return 'Unit
-                        d! $ :: :query $ decode-map-as
-                          .unwrap $ get e :value
-                          , 'String
+                        hint-fn $ Fn respo.schema/RespoEvent
+                          Fn AnyEnum $ -> Unit
+                          -> Unit
+                        d! $ :: :query $ decode-map-as (:value e) 'String
                         , &unit
                 let
                     result $ parse-by-letter content query
@@ -60,41 +50,44 @@
                       {} $ :style $ {} (:font-family ui/font-code)
                       code ({})
                         <> $ trim $ format-cirru-edn word-result
-                    when
+                    if
                       match (calcit.core/get result :matches?)
                         (:some value) value
                         (:none) nil
-                      div ({})
+                      Option :some $ div ({})
                         comp-visual
                           decode-map-as
                             match (calcit.core/get result :chunks)
                               (:some value) value
                               (:none) nil
-                            :: 'List $ :: 'List 'Dynamic
+                            List $ List Dynamic
                           {} $ :color $ hsl 0 0 70
-                    when
+                      Option :none
+                    if
                       match (calcit.core/get word-result :matches?)
                         (:some value) value
                         (:none) nil
-                      div ({})
+                      Option :some $ div ({})
                         comp-visual
                           decode-map-as
                             match (calcit.core/get word-result :chunks)
                               (:some value) value
                               (:none) nil
-                            :: 'List $ :: 'List 'Dynamic
+                            List $ List Dynamic
                           {} $ :color $ hsl 0 0 70
-                when dev? $ comp-typed-reel (>> states :reel) reel $ {}
+                      Option :none
+                if dev?
+                  Option :some $ comp-typed-reel (>> states :reel) reel $ {}
+                  Option :none
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] $ :: 'reel.typed/State 'fuzzy-filter.schema/Op 'fuzzy-filter.schema/Store
+          :schema $ quote $ Fn (reel.typed/State fuzzy-filter.schema/Op fuzzy-filter.schema/Store) (-> respo.schema/Component)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.comp.container
           :require
             respo-ui.core :refer $ hsl
             respo-ui.core :as ui
             respo.core :refer $ defcomp >> <> div button textarea span input pre code
-            respo.comp.space :refer $ =<
+            respo.comp.space :refer $ space-y
             reel.comp.reel :refer $ comp-typed-reel
             fuzzy-filter.config :refer $ dev?
             fuzzy-filter.core :refer $ parse-by-letter parse-by-word
@@ -109,9 +102,8 @@
               list->
                 {} $ :style $ {} (:display :inline-block)
                 -> pieces $ map-indexed $ fn (idx chunk)
-                  hint-fn $ {}
-                    :args $ [] 'Number $ :: 'List 'Dynamic
-                    :return $ :: 'List 'Dynamic
+                  hint-fn $ Fn Number (List Dynamic)
+                    -> $ List Dynamic
                   [] idx $ span $ {}
                     :inner-text $ .unwrap-or (last chunk) |
                     :style $ .merge style-base $ if
@@ -121,10 +113,10 @@
                         , style-hit
                       , style-rest
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ []
-              :: 'List $ :: 'List 'Dynamic
-              :: 'Map 'Tag 'Dynamic
+          :schema $ quote $ Fn
+            List $ List Dynamic
+            Map Tag Dynamic
+            -> respo.schema/Component
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.comp.visual
           :require
@@ -137,17 +129,17 @@
         'bundle-builds $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def bundle-builds (#{} |release |local-bundle)
           :examples $ []
-          :schema $ :: 'Set 'String
+          :schema $ quote $ Set String
         'dev? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def dev?
             = |dev $ .unwrap-or (get-env |mode) |release
           :examples $ []
-          :schema $ :: 'Bool
+          :schema $ quote Bool
         'site $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def site
             {} (:storage |fuzzy-filter) (:dev-ui |http://localhost:8100/main.css) (:release-ui |http://cdn.tiye.me/favored-fonts/main.css) (:cdn-url |http://cdn.tiye.me/fuzzy-filter/) (:cdn-folder |tiye.me:cdn/fuzzy-filter) (:title "|Fuzzy Filter") (:icon |http://cdn.tiye.me/logo/mvc-works.png) (:upload-folder |tiye.me:repo/mvc-works/fuzzy-filter/)
           :examples $ []
-          :schema $ :: 'Map 'Tag 'String
+          :schema $ quote $ Map Tag String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.config
     'fuzzy-filter.core $ %{} 'FileEntry
@@ -156,9 +148,9 @@
           :code $ quote $ defn conflate-chunks (xs)
             conflate-chunks-iter ([]) ([]) xs
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] $ :: 'List (:: 'List 'Dynamic)
-            :return $ :: 'List $ :: 'List 'Dynamic
+          :schema $ quote $ Fn
+            List $ List Dynamic
+            -> $ List $ List Dynamic
         'conflate-chunks-iter $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn conflate-chunks-iter (acc buffer xs)
             if (empty? xs)
@@ -184,12 +176,11 @@
                       rest xs
                     recur (conj acc buffer) x0 $ rest xs
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ []
-              :: 'List $ :: 'List 'Dynamic
-              :: 'List 'Dynamic
-              :: 'List $ :: 'List 'Dynamic
-            :return $ :: 'List $ :: 'List 'Dynamic
+          :schema $ quote $ Fn
+            List $ List Dynamic
+            List Dynamic
+            List $ List Dynamic
+            -> $ List $ List Dynamic
         'parse-by-letter $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn parse-by-letter (text query)
             let
@@ -199,16 +190,13 @@
               {}
                 :matches? $ not $ any? results
                   fn (x)
-                    hint-fn $ {}
-                      :args $ [] $ :: 'List 'Dynamic
-                      :return 'Bool
+                    hint-fn $ Fn (List Dynamic) (-> Bool)
                     = :missed $ .unwrap-or (first x) :missed
                 :chunks results
                 :text text
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] 'String 'String
-            :return $ :: 'Map 'Tag 'Dynamic
+          :schema $ quote $ Fn String String
+            -> $ Map Tag Dynamic
           :tests $ []
             %{} 'TestEntry (:name |matched-subsequence)
               :code $ quote $ assert= true
@@ -249,34 +237,28 @@
                       rest xs
                       , ys
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ []
-              :: 'List $ :: 'List 'Dynamic
-              :: 'List 'String
-              :: 'List 'String
-            :return $ :: 'List $ :: 'List 'Dynamic
+          :schema $ quote $ Fn
+            List $ List Dynamic
+            List String
+            List String
+            -> $ List $ List Dynamic
         'parse-by-word $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn parse-by-word (text query)
             let
                 result $ parse-by-word-iter ([]) text $ filter (split query "| ")
                   fn (x)
-                    hint-fn $ {}
-                      :args $ [] 'String
-                      :return 'Bool
+                    hint-fn $ Fn String $ -> Bool
                     not $ blank? x
               {}
                 :matches? $ not $ any? result
                   fn (x)
-                    hint-fn $ {}
-                      :args $ [] $ :: 'List 'Dynamic
-                      :return 'Bool
+                    hint-fn $ Fn (List Dynamic) (-> Bool)
                     = :missed $ .unwrap-or (first x) :missed
                 :chunks result
                 :text text
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] 'String 'String
-            :return $ :: 'Map 'Tag 'Dynamic
+          :schema $ quote $ Fn String String
+            -> $ Map Tag Dynamic
           :tests $ [] $ %{} 'TestEntry (:name |emoji-before-word)
             :code $ quote $ assert=
               {} (:matches? true) (:text "|😀ab😀")
@@ -294,22 +276,23 @@
                     > p 0
                     recur
                       conj acc
-                        [] :rest $ slice text 0 p
+                        [] :rest $ slice text 0 $ Option :some p
                         [] :hit y0
-                      slice text $ + p $ .len y0
+                      slice text
+                        + p $ .len y0
+                        Option :none
                       rest ys
                   (= p 0)
                     recur
                       conj acc $ [] :hit y0
-                      slice text $ .len y0
+                      slice text (.len y0) (Option :none)
                       rest ys
                   true $ conj acc $ [] :missed y0
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ []
-              :: 'List $ :: 'List 'Dynamic
-              , 'String $ :: 'List 'String
-            :return $ :: 'List $ :: 'List 'Dynamic
+          :schema $ quote $ Fn
+            List $ List Dynamic
+            , String (List String)
+              -> $ List $ List Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.core
           :require $ clojure.string :as string
@@ -318,21 +301,17 @@
         '*reel $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *reel (schema/new-reel schema/store)
           :examples $ []
-          :schema $ :: 'Ref $ :: 'reel.typed/State 'fuzzy-filter.schema/Op 'fuzzy-filter.schema/Store
+          :schema $ quote $ Ref (reel.typed/State fuzzy-filter.schema/Op fuzzy-filter.schema/Store)
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
-            if (enum? op)
-              match (typed/decode-control op)
-                (:some control)
-                  reset! *reel $ typed/apply-control updater @*reel control
-                (:none)
-                  reset! *reel $ typed/record-op updater @*reel (schema/decode-op op) (generate-id!) (unix-time-ms)
-              raise |Expected-Fuzzy-Filter-operation
+            match (typed/decode-control op)
+              (:some control)
+                reset! *reel $ typed/apply-control updater @*reel control
+              (:none)
+                reset! *reel $ typed/record-op updater @*reel (schema/decode-op op) (generate-id!) (unix-time-ms)
             , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ [] 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn AnyEnum (-> Unit) (:features :js-ffi)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             println "|Running mode:" $ if config/dev? |dev |release
@@ -353,18 +332,14 @@
             js-ffi.browser/set-interval! persist-storage! $ * 1000 60
             println "|App started."
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn mount-target ()
             match (js-ffi.browser/query-selector |.app)
               (:none) (raise "|Missing .app mount target")
               (:some host) (respo.ffi.browser/narrow-element host)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.dom/DomElement)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> respo.dom/DomElement) (:features :js-ffi)
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
             js-ffi.browser/storage-set!
@@ -375,9 +350,7 @@
                 , 'String
               format-cirru-edn $ &struct:to-map $ :store @*reel
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (js-nullish? build-errors)
@@ -388,16 +361,12 @@
               hud! |error build-errors
             , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             render! (mount-target) (comp-container @*reel) dispatch!
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.main
           :require
@@ -410,30 +379,33 @@
             |./calcit.build-errors :default build-errors
             |bottom-tip :default hud!
             reel.typed :as typed
-            respo.util :refer $ generate-id!
     'fuzzy-filter.schema $ %{} 'FileEntry
       :defs $ {}
+        'DispatchOp $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ def DispatchOp (:: :unhandled)
+          :examples $ []
+          :schema $ quote AnyEnum
         'Op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defenum Op
-            :states (:: 'List 'Dynamic) 'Dynamic
-            :content 'String
-            :query 'String
-            :hydrate-storage 'fuzzy-filter.schema/Store
+            :states (List respo.schema/CoordKey) Dynamic
+            :content String
+            :query String
+            :hydrate-storage fuzzy-filter.schema/Store
           :examples $ []
-          :schema $ :: 'EnumDef
+          :schema $ quote EnumDef
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store
-            :states $ :: 'Map 'Dynamic 'Dynamic
-            :content 'String
-            :query 'String
+            :states $ Map Dynamic Dynamic
+            :content String
+            :query String
           :examples $ []
-          :schema $ :: 'StructDef
+          :schema $ quote StructDef
         'decode-op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-op (op)
             match op
               (:states cursor data)
                 Op :states
-                  decode-map-as cursor $ :: 'List 'Dynamic
+                  decode-map-as cursor $ List respo.schema/CoordKey
                   , data
               (:content value)
                 Op :content $ decode-map-as value 'String
@@ -443,32 +415,29 @@
                 Op :hydrate-storage $ normalize-store data
               _ $ raise |Unknown-Fuzzy-Filter-operation
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'fuzzy-filter.schema/Op)
-            :args $ [] 'Enum
+          :schema $ quote $ Fn AnyEnum (-> fuzzy-filter.schema/Op)
         'empty-records $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def empty-records ([])
           :examples $ []
-          :schema $ :: 'List $ :: 'reel.typed/Record 'fuzzy-filter.schema/Op
+          :schema $ quote $ List (reel.typed/Record fuzzy-filter.schema/Op)
         'new-reel $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn new-reel (base)
             typed/State :base base :store base :records empty-records :pointer (Option :none) :stopped? false :display? false :merged? false
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] 'fuzzy-filter.schema/Store
-            :return $ :: 'reel.typed/State 'fuzzy-filter.schema/Op 'fuzzy-filter.schema/Store
+          :schema $ quote $ Fn fuzzy-filter.schema/Store
+            -> $ reel.typed/State fuzzy-filter.schema/Op fuzzy-filter.schema/Store
         'normalize-store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-store (raw)
             decode-map-as
               if (struct? raw) (&struct:to-map raw) raw
               , 'Store
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'fuzzy-filter.schema/Store)
-            :args $ [] 'Dynamic
+          :schema $ quote $ Fn Dynamic (-> fuzzy-filter.schema/Store)
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             Store :states ({}) :content "|this and that to search" :query "|that search"
           :examples $ []
-          :schema $ :: 'fuzzy-filter.schema/Store
+          :schema $ quote fuzzy-filter.schema/Store
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.schema
           :require $ reel.typed :as typed
@@ -485,8 +454,7 @@
               (:query value) (assoc store :query value)
               (:hydrate-storage data) data
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'fuzzy-filter.schema/Store)
-            :args $ [] 'fuzzy-filter.schema/Store 'fuzzy-filter.schema/Op 'String 'Number
+          :schema $ quote $ Fn fuzzy-filter.schema/Store fuzzy-filter.schema/Op String Number (-> fuzzy-filter.schema/Store)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.updater
           :require
