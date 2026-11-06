@@ -6,12 +6,11 @@ Fuzzy Filter
 
 Demo http://r.tiye.me/mvc-works/fuzzy-filter/
 
-### 0.0.17 候选：正式 Calcit 0.30.1
+### Calcit 0.35.1
 
-使用者影响：CLI 与 `@calcit/procs` 一起升级到正式 **0.30.1**，同步依赖图为
-Reel0.6.42、UI0.8.1、Respo0.16.126、JS-FFI0.2.6。请重新安装模块、生成JS并刷新，
-不要混装旧alpha缓存；候选tag未发布前不要用main/hash代替。
-本轮迁移18处旧Option、3处Map合并和2处字符串长度调用，并为四个集合回调补充真实类型。
+使用者升级后需重新安装模块、生成 JS 并刷新。CLI 与 `@calcit/procs` 配对至正式 0.35.1，
+使用 Reel 0.9.2、UI 0.15.1、Respo 0.19.4 和 JS FFI 0.2.13。Respo 输入回调采用
+`RespoEvent`，派发接受枚举，状态坐标使用 Respo 的 `CoordKey` union。
 公开匹配算法/Map返回格式、Unicode语义和Demo存档格式/key不变，HUD错误展示保留。
 修正存档恢复顺序：解析/解码成功后才注册原退出保存和一分钟定时保存，避免坏存档启动
 失败后被默认Store覆盖；不吞错、不清空或为非法存档补默认值，参见[#39](https://github.com/mvc-works/fuzzy-filter/issues/39)。
@@ -43,7 +42,7 @@ Workflow https://github.com/calcit-lang/respo-calcit-workflow
 
 ### 开发验证
 
-当前候选配对 CLI / `@calcit/procs` **0.30.1**，模块准备正式 patch **0.0.17**。
+当前候选配对 CLI / `@calcit/procs` **0.35.1**，模块候选版本为 **0.0.18**。
 共享模块固定上述正式 tag，不使用 main/hash；下文0.0.16的类型/交互迁移说明属于已发布历史。
 须通过干净 CI、实际审查和合并后 main CI，再发布新 tag。
 仍使用 `calcit-lang/js-ffi` 的类型化浏览器适配器处理挂载节点、本地存储和定时器。仅使用 `calcit.cirru`、`deps.cirru`，不要恢复或提交旧的 `compact.cirru`、`package.cirru`；CI 也会拒绝被 Git 忽略但仍存在的旧文件。运行以下命令验证 Calcit 测试及生成的 JavaScript：
