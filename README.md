@@ -6,12 +6,12 @@ Fuzzy Filter
 
 Demo http://r.tiye.me/mvc-works/fuzzy-filter/
 
-### Calcit 0.35.1
+### Calcit 0.37.0
 
-使用者升级后需重新安装模块、生成 JS 并刷新。CLI 与 `@calcit/procs` 配对至正式 0.35.1，
-使用 Reel 0.9.2、UI 0.15.1、Respo 0.19.4 和 JS FFI 0.2.13。Respo 输入回调采用
+使用者升级后需重新安装模块、生成 JS 并刷新。CLI 与 `@calcit/procs` 配对至正式 0.37.0，
+使用 Reel 0.10.0、UI 0.15.2、Respo 0.19.5 和 JS FFI 0.2.13。Respo 输入回调采用
 `RespoEvent`，派发接受枚举，状态坐标使用 Respo 的 `CoordKey` union。
-公开匹配算法/Map返回格式、Unicode语义和Demo存档格式/key不变，HUD错误展示保留。
+公开匹配结果仍是原来的 Map，分段仍是 `[] 标签 文本`。类型使用 `MatchValue` union 描述返回值，`comp-visual` 的分段参数明确为 `List (Tuple Tag String)`。Unicode 匹配、Demo 存档和页面 HUD 提示沿用原行为。
 修正存档恢复顺序：解析/解码成功后才注册原退出保存和一分钟定时保存，避免坏存档启动
 失败后被默认Store覆盖；不吞错、不清空或为非法存档补默认值，参见[#39](https://github.com/mvc-works/fuzzy-filter/issues/39)。
 继续保留all-defs、完整strict、原3项native及7项Node测试、
@@ -32,7 +32,8 @@ ns your-app
 ```cirru.no-check
 let
     result $ parse-by-letter |abc |ac
-  comp-visual (decode-map-as (.unwrap (get result :chunks)) $ :: 'List $ :: 'List 'Dynamic)
+  comp-visual
+    decode-map-as (.unwrap (get result :chunks)) $ List (Tuple Tag String)
     {} (:color $ respo-ui.core/hsl 0 0 70)
 ```
 
@@ -42,7 +43,7 @@ Workflow https://github.com/calcit-lang/respo-calcit-workflow
 
 ### 开发验证
 
-当前候选配对 CLI / `@calcit/procs` **0.35.1**，模块候选版本为 **0.0.18**。
+当前候选配对 CLI / `@calcit/procs` **0.37.0**，模块候选版本为 **0.0.19**。
 共享模块固定上述正式 tag，不使用 main/hash；下文0.0.16的类型/交互迁移说明属于已发布历史。
 须通过干净 CI、实际审查和合并后 main CI，再发布新 tag。
 仍使用 `calcit-lang/js-ffi` 的类型化浏览器适配器处理挂载节点、本地存储和定时器。仅使用 `calcit.cirru`、`deps.cirru`，不要恢复或提交旧的 `compact.cirru`、`package.cirru`；CI 也会拒绝被 Git 忽略但仍存在的旧文件。运行以下命令验证 Calcit 测试及生成的 JavaScript：
