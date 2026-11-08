@@ -11,7 +11,7 @@
     'fuzzy-filter.comp.container $ %{} 'FileEntry
       :defs $ {} $ 'comp-container
         %{} 'CodeEntry (:doc |)
-          :code $ quote $ defcomp comp-container (reel)
+          :code $ quote $ defcomp comp-container (reel on-control!)
             let
                 store $ :store reel
                 states $ :states store
@@ -73,10 +73,12 @@
                           {} $ :color $ hsl 0 0 70
                       Option :none
                 if dev?
-                  Option :some $ comp-typed-reel (>> states :reel) reel $ {}
+                  Option :some $ comp-typed-reel (>> states :reel) reel ({}) on-control!
                   Option :none
           :examples $ []
-          :schema $ quote $ Fn (reel.typed/State fuzzy-filter.schema/Op fuzzy-filter.schema/Store) (-> respo.schema/Component)
+          :schema $ quote $ Fn (reel.typed/State fuzzy-filter.schema/Op fuzzy-filter.schema/Store)
+            Fn reel.typed/Control $ -> Unit
+            -> respo.schema/Component
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.comp.container
           :require
@@ -291,11 +293,7 @@
           :schema $ quote $ Ref (reel.typed/State fuzzy-filter.schema/Op fuzzy-filter.schema/Store)
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
-            match (typed/decode-control op)
-              (:some control)
-                reset! *reel $ typed/apply-control updater @*reel control
-              (:none)
-                reset! *reel $ typed/record-op updater @*reel (schema/decode-op op) (generate-id!) (unix-time-ms)
+            reset! *reel $ typed/record-op updater @*reel op (generate-id!) (unix-time-ms)
             , &unit
           :examples $ []
           :schema $ quote $ Fn fuzzy-filter.schema/Op (-> Unit) (:features :js-ffi)
@@ -305,18 +303,12 @@
             if config/dev? $ load-console-formatter!
             render-app!
             add-watch! *reel :changes $ fn (r p) (render-app!)
-            listen-devtools-toggle! |a $ fn ()
-              reset! *reel $ typed/apply-control updater @*reel $ reel.typed/Control :toggle
-              , &unit
+            listen-devtools! |a on-control!
             match
-              js-ffi.browser/storage-get $ decode-map-as
-                match (calcit.core/get config/site :storage)
-                  (:some value) value
-                  (:none) nil
-                , 'String
+              js-ffi.browser/storage-get $ .unwrap $ calcit.core/get config/site :storage
               (:none) &unit
               (:some raw)
-                dispatch! $ :: :hydrate-storage $ parse-cirru-edn raw
+                dispatch! $ schema/Op :hydrate-storage $ schema/normalize-store (parse-cirru-edn raw)
             js-ffi.browser/add-event-listener! |beforeunload $ fn (event) (persist-storage!)
             js-ffi.browser/set-interval! persist-storage! $ * 1000 60
             println "|App started."
@@ -329,14 +321,16 @@
               (:some host) (respo.ffi.browser/narrow-element host)
           :examples $ []
           :schema $ quote $ Fn (-> respo.dom/DomElement) (:features :js-ffi)
+        'on-control! $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn on-control! (control)
+            reset! *reel $ typed/apply-control updater @*reel control
+            , &unit
+          :examples $ []
+          :schema $ quote $ Fn reel.typed/Control (-> Unit) (:features :js-ffi)
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
             js-ffi.browser/storage-set!
-              decode-map-as
-                match (calcit.core/get config/site :storage)
-                  (:some value) value
-                  (:none) nil
-                , 'String
+              .unwrap $ calcit.core/get config/site :storage
               format-cirru-edn $ &struct:to-map $ :store @*reel
           :examples $ []
           :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
@@ -353,17 +347,19 @@
           :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
-            render! (mount-target) (comp-container @*reel) dispatch!
+            render-with! (mount-target)
+              fn () $ comp-container @*reel on-control!
+              , dispatch!
           :examples $ []
           :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.main
           :require
-            respo.core :refer $ render! clear-cache! realize-ssr!
+            respo.core :refer $ render-with! clear-cache! realize-ssr!
             fuzzy-filter.comp.container :refer $ comp-container
             fuzzy-filter.updater :refer $ updater
             fuzzy-filter.schema :as schema
-            reel.util :refer $ listen-devtools-toggle!
+            reel.util :refer $ listen-devtools!
             fuzzy-filter.config :as config
             |./calcit.build-errors :default build-errors
             |bottom-tip :default hud!
@@ -390,22 +386,6 @@
             :query String
           :examples $ []
           :schema $ quote StructDef
-        'decode-op $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn decode-op (op)
-            match op
-              (:states cursor data)
-                Op :states
-                  decode-map-as cursor $ List respo.schema/CoordKey
-                  , data
-              (:content value)
-                Op :content $ decode-map-as value 'String
-              (:query value)
-                Op :query $ decode-map-as value 'String
-              (:hydrate-storage data)
-                Op :hydrate-storage $ normalize-store data
-              _ $ raise |Unknown-Fuzzy-Filter-operation
-          :examples $ []
-          :schema $ quote $ Fn AnyEnum (-> fuzzy-filter.schema/Op)
         'empty-records $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def empty-records ([])
           :examples $ []

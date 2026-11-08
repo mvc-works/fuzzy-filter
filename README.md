@@ -6,11 +6,11 @@ Fuzzy Filter
 
 Demo http://r.tiye.me/mvc-works/fuzzy-filter/
 
-### Calcit 0.37.0
+### Calcit 0.38.0
 
-使用者升级后需重新安装模块、生成 JS 并刷新。CLI 与 `@calcit/procs` 配对至正式 0.37.0，
-使用 Reel 0.10.0、UI 0.15.2、Respo 0.19.5 和 JS FFI 0.2.13。Respo 输入回调采用
-`RespoEvent`，派发接受枚举，状态坐标使用 Respo 的 `CoordKey` union。
+使用者升级后需重新安装模块、生成 JS 并刷新。CLI 与 `@calcit/procs` 配对至正式 0.38.0，
+使用 Reel 0.11.0、UI 0.15.2、Respo 0.19.5 和 JS FFI 0.2.13。Respo 输入回调采用
+`RespoEvent`，应用派发接受具名 `Op`，Reel 面板和快捷键使用独立的 `Control` 回调，状态坐标使用 Respo 的 `CoordKey` union。
 公开匹配结果仍是原来的 Map，分段仍是 `[] 标签 文本`。类型使用 `MatchValue` union 描述返回值，`comp-visual` 的分段参数明确为 `List (Tuple Tag String)`。Unicode 匹配、Demo 存档和页面 HUD 提示沿用原行为。
 修正存档恢复顺序：解析/解码成功后才注册原退出保存和一分钟定时保存，避免坏存档启动
 失败后被默认Store覆盖；不吞错、不清空或为非法存档补默认值，参见[#39](https://github.com/mvc-works/fuzzy-filter/issues/39)。
@@ -43,7 +43,7 @@ Workflow https://github.com/calcit-lang/respo-calcit-workflow
 
 ### 开发验证
 
-当前候选配对 CLI / `@calcit/procs` **0.37.0**，模块候选版本为 **0.0.19**。
+当前候选配对 CLI / `@calcit/procs` **0.38.0**，模块候选版本为 **0.0.19**。
 共享模块固定上述正式 tag，不使用 main/hash；下文0.0.16的类型/交互迁移说明属于已发布历史。
 须通过干净 CI、实际审查和合并后 main CI，再发布新 tag。
 仍使用 `calcit-lang/js-ffi` 的类型化浏览器适配器处理挂载节点、本地存储和定时器。仅使用 `calcit.cirru`、`deps.cirru`，不要恢复或提交旧的 `compact.cirru`、`package.cirru`；CI 也会拒绝被 Git 忽略但仍存在的旧文件。运行以下命令验证 Calcit 测试及生成的 JavaScript：
@@ -56,8 +56,6 @@ calcit calcit.cirru js
 node --test scripts/fuzzy-filter.test.mjs
 ```
 
-直接与传递依赖收敛为 JS-FFI 0.2.6、Respo 0.16.126、UI 0.8.1、Reel 0.6.42。
-本轮不执行本地 Caps；本地复用模块不替代独立 CI 的 strict 安装。
 浏览器入口显式声明 `mode: js` / `target: browser`，all-defs覆盖全部定义，包含业务和元数据命名空间。
 以下为历史0.0.16（CLI/procs alpha.5）的迁移与验收记录，不作为0.0.17的新验收结果：
 沿用 0.0.15 的 Unicode 字符语义，核心匹配可在 native/JS 两端执行，本轮不修改其公开算法或返回格式。
@@ -81,7 +79,7 @@ renderer 的真实 Dynamic 入口先检查 Enum，输入回调使用真实 Map/d
 VITE_BASE_URL=https://cos-sh.tiye.me/mvc-works/fuzzy-filter/ yarn build
 ```
 
-上传校验使用正式 COS Action v1.2.0 的内置 verify 配置，通过
+上传校验使用正式 COS Action v1.3.0 的内置 verify 配置，通过
 `public-base-url` 启用，不添加额外 CDN 校验脚本。Action 固定到该正式版本
 的精确正式 tag。原共享字体、图标与服务器部署路径不变。
 
