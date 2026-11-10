@@ -106,7 +106,7 @@
           :examples $ []
           :schema $ quote $ Fn
             List $ Tuple Tag String
-            Map Tag Dynamic
+            Map Tag respo.schema/CssValue
             -> respo.schema/Component
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.comp.visual
