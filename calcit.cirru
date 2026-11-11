@@ -376,10 +376,7 @@
           :examples $ []
           :schema $ quote EnumDef
         'Store $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct Store
-            :states $ Map Dynamic Dynamic
-            :content String
-            :query String
+          :code $ quote $ defstruct Store (:states respo.schema/States) (:content String) (:query String)
           :examples $ []
           :schema $ quote StructDef
         'empty-records $ %{} 'CodeEntry (:doc |)
@@ -398,7 +395,7 @@
               if (struct? raw) (&struct:to-map raw) raw
               , 'Store
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> Store)
+          :schema $ quote $ Fn Input (-> Store) (:generics Input)
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             Store :states ({}) :content "|this and that to search" :query "|that search"
