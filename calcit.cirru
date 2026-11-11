@@ -54,27 +54,27 @@
                       decode-map-as
                         .unwrap $ get result :matches?
                         , 'Bool
-                      Option :some $ div ({})
+                      Some $ div ({})
                         comp-visual
                           decode-map-as
                             .unwrap $ get result :chunks
                             List $ Tuple Tag String
                           {} $ :color $ hsl 0 0 70
-                      Option :none
+                      , None
                     if
                       decode-map-as
                         .unwrap $ get word-result :matches?
                         , 'Bool
-                      Option :some $ div ({})
+                      Some $ div ({})
                         comp-visual
                           decode-map-as
                             .unwrap $ get word-result :chunks
                             List $ Tuple Tag String
                           {} $ :color $ hsl 0 0 70
-                      Option :none
+                      , None
                 if dev?
-                  Option :some $ comp-typed-reel (>> states :reel) reel ({}) on-control!
-                  Option :none
+                  Some $ comp-typed-reel (>> states :reel) reel ({}) on-control!
+                  , None
           :examples $ []
           :schema $ quote $ Fn (reel.typed/State fuzzy-filter.schema/Op fuzzy-filter.schema/Store)
             Fn reel.typed/Control $ -> Unit
@@ -139,7 +139,7 @@
             -> $ Tuple Tag String
         'conflate-chunks $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn conflate-chunks (xs)
-            conflate-chunks-iter ([]) (Option :none) xs
+            conflate-chunks-iter ([]) None xs
           :examples $ []
           :schema $ quote $ Fn
             List $ Tuple Tag String
@@ -154,13 +154,13 @@
               (:some current)
                 match buffer
                   (:none)
-                    recur acc (Option :some current) (rest xs)
+                    recur acc (Some current) (rest xs)
                   (:some previous)
                     let[] (kind text) current $ let[] (prior-kind prior-text) previous $ if (= kind prior-kind)
                       recur acc
-                        Option :some $ chunk kind $ str prior-text text
+                        Some $ chunk kind $ str prior-text text
                         rest xs
-                      recur (conj acc previous) (Option :some current) (rest xs)
+                      recur (conj acc previous) (Some current) (rest xs)
           :examples $ []
           :schema $ quote $ Fn
             List $ Tuple Tag String
@@ -186,8 +186,8 @@
           :code $ quote $ defn parse-by-letter (text query)
             let
                 results $ conflate-chunks $ parse-by-letter-iter ([])
-                  split (assert-type text 'String) |
-                  split (assert-type query 'String) |
+                  split (assert-type text String) |
+                  split (assert-type query String) |
               match-result text results
           :examples $ []
           :schema $ quote $ Fn String String
@@ -265,16 +265,16 @@
                     > p 0
                     recur
                       conj acc
-                        chunk :rest $ slice text 0 $ Option :some p
+                        chunk :rest $ slice text 0 $ Some p
                         chunk :hit y0
                       slice text
                         + p $ .len y0
-                        Option :none
+                        , None
                       rest ys
                   (= p 0)
                     recur
                       conj acc $ chunk :hit y0
-                      slice text (.len y0) (Option :none)
+                      slice text (.len y0) None
                       rest ys
                   true $ conj acc $ chunk :missed y0
           :examples $ []
@@ -290,13 +290,13 @@
         '*reel $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *reel (schema/new-reel schema/store)
           :examples $ []
-          :schema $ quote $ Ref (reel.typed/State fuzzy-filter.schema/Op fuzzy-filter.schema/Store)
+          :schema $ quote $ Ref (typed/State schema/Op schema/Store)
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             reset! *reel $ typed/record-op updater @*reel op (generate-id!) (unix-time-ms)
             , &unit
           :examples $ []
-          :schema $ quote $ Fn fuzzy-filter.schema/Op (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn schema/Op (-> Unit) (:features :js-ffi)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             println "|Running mode:" $ if config/dev? |dev |release
@@ -326,7 +326,7 @@
             reset! *reel $ typed/apply-control updater @*reel control
             , &unit
           :examples $ []
-          :schema $ quote $ Fn reel.typed/Control (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn typed/Control (-> Unit) (:features :js-ffi)
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
             js-ffi.browser/storage-set!
@@ -372,11 +372,7 @@
           :examples $ []
           :schema $ quote UnionDef
         'Op $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defenum Op
-            :states (List respo.schema/CoordKey) Dynamic
-            :content String
-            :query String
-            :hydrate-storage fuzzy-filter.schema/Store
+          :code $ quote $ defenum Op (:content String) (:query String) (:hydrate-storage fuzzy-filter.schema/Store)
           :examples $ []
           :schema $ quote EnumDef
         'Store $ %{} 'CodeEntry (:doc |)
@@ -389,25 +385,25 @@
         'empty-records $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def empty-records ([])
           :examples $ []
-          :schema $ quote $ List (reel.typed/Record fuzzy-filter.schema/Op)
+          :schema $ quote $ List (typed/Record Op)
         'new-reel $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn new-reel (base)
-            typed/State :base base :store base :records empty-records :pointer (Option :none) :stopped? false :display? false :merged? false
+            typed/State :base base :store base :records empty-records :pointer None :stopped? false :display? false :merged? false
           :examples $ []
-          :schema $ quote $ Fn fuzzy-filter.schema/Store
-            -> $ reel.typed/State fuzzy-filter.schema/Op fuzzy-filter.schema/Store
+          :schema $ quote $ Fn Store
+            -> $ typed/State Op Store
         'normalize-store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-store (raw)
             decode-map-as
               if (struct? raw) (&struct:to-map raw) raw
               , 'Store
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> fuzzy-filter.schema/Store)
+          :schema $ quote $ Fn Dynamic (-> Store)
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             Store :states ({}) :content "|this and that to search" :query "|that search"
           :examples $ []
-          :schema $ quote fuzzy-filter.schema/Store
+          :schema $ quote Store
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.schema
           :require $ reel.typed :as typed
@@ -416,17 +412,11 @@
         %{} 'CodeEntry (:doc |)
           :code $ quote $ defn updater (store op op-id op-time)
             match op
-              (:states cursor data)
-                let
-                    states $ update-state-tree (:states store) cursor data
-                  if (map? states) (assoc store :states states) (raise |Invalid-state-tree)
               (:content value) (assoc store :content value)
               (:query value) (assoc store :query value)
               (:hydrate-storage data) data
           :examples $ []
-          :schema $ quote $ Fn fuzzy-filter.schema/Store fuzzy-filter.schema/Op String Number (-> fuzzy-filter.schema/Store)
+          :schema $ quote $ Fn schema/Store schema/Op String Number (-> schema/Store)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.updater
-          :require
-            respo.cursor :refer $ update-state-tree
-            fuzzy-filter.schema :as schema
+          :require $ fuzzy-filter.schema :as schema
