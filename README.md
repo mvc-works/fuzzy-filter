@@ -6,9 +6,9 @@ Fuzzy Filter
 
 Demo http://r.tiye.me/mvc-works/fuzzy-filter/
 
-### Calcit 0.41.1
+### Calcit 0.42.1
 
-使用者升级后需重新安装模块、生成 JS 并刷新。CLI 与 `@calcit/procs` 配对至正式 0.41.1，
+使用者升级后需重新安装模块、生成 JS 并刷新。CLI 与 `@calcit/procs` 配对至正式 0.42.1，
 使用 Reel 0.11.0、UI 0.15.2、Respo 0.19.5 和 JS FFI 0.2.13。Respo 输入回调采用
 `RespoEvent`，应用派发接受具名 `Op`，Reel 面板和快捷键使用独立的 `Control` 回调。示例页的应用操作只包含文本、查询和存档恢复。
 公开匹配结果仍是原来的 Map，分段仍是 `[] 标签 文本`。类型使用 `MatchValue` union 描述返回值，`comp-visual` 的分段参数明确为 `List (Tuple Tag String)`，样式值沿用 Respo 的 `CssValue` union。Unicode 匹配、Demo 存档和页面 HUD 提示沿用原行为。
