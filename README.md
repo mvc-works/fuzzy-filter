@@ -43,7 +43,7 @@ Workflow https://github.com/calcit-lang/respo-calcit-workflow
 
 ### 开发验证
 
-当前候选配对 CLI / `@calcit/procs` **0.40.0**，模块候选版本为 **0.0.19**。
+当前候选配对 CLI / `@calcit/procs` **0.43.0**，模块候选版本为 **0.0.20**。
 共享模块固定上述正式 tag，不使用 main/hash；下文0.0.16的类型/交互迁移说明属于已发布历史。
 须通过干净 CI、实际审查和合并后 main CI，再发布新 tag。
 仍使用 `calcit-lang/js-ffi` 的类型化浏览器适配器处理挂载节点、本地存储和定时器。仅使用 `calcit.cirru`、`deps.cirru`，不要恢复或提交旧的 `compact.cirru`、`package.cirru`；CI 也会拒绝被 Git 忽略但仍存在的旧文件。运行以下命令验证 Calcit 测试及生成的 JavaScript：
