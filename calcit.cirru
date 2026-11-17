@@ -77,8 +77,9 @@
                   , None
           :examples $ []
           :schema $ quote $ Fn (reel.typed/State fuzzy-filter.schema/Op fuzzy-filter.schema/Store)
-            Fn reel.typed/Control $ -> Unit
+            Fn reel.typed/Control (-> Unit) (:features :state)
             -> respo.schema/Component
+            :features :state
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns fuzzy-filter.comp.container
           :require
